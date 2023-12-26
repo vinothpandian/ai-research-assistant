@@ -1,0 +1,54 @@
+[tool.poetry]
+name = "research-assistant"
+version = "0.1.0"
+description = "An AI research assistant to help you with your research work"
+authors = ["Vinoth Pandian <vinothpandian@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+#packages = [
+#    { include = "core" }]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.1.9"
+pre-commit = "^3.6.0"
+jupyter = "^1.0.0"
+
+
+[tool.poetry.group.core.dependencies]
+pydantic = "^2.5.3"
+pydantic-settings = "^2.1.0"
+
+
+[tool.poetry.group.app.dependencies]
+streamlit = "^1.29.0"
+feedparser = "^6.0.11"
+watchdog = "^3.0.0"
+pocketbase = "^0.9.2"
+
+
+[tool.poetry.group.ai.dependencies]
+sentence-transformers = "^2.2.2"
+qdrant-client = "^1.7.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    # Pyflakes
+    "F",
+    # Pycodestyle
+    "E",
+    "W",
+    # isort
+    "I001"
+]
+

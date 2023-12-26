@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+
+  pocketbase:
+    container_name: pocketbase
+    build:
+      context: .
+      dockerfile: docker/pocketbase.Dockerfile
+    volumes:
+      - pocketbase-data:/pb/pb_data
+      - ./migrations:/pb/pb_migrations
+    ports:
+      - "8080:8080"
+
+volumes:
+  pocketbase-data:
