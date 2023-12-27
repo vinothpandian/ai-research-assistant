@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Iterable
 
 from pydantic import AwareDatetime, BaseModel, RootModel
 
@@ -19,8 +19,8 @@ class ArxivArticle(BaseModel):
 class ArxivArticlesList(RootModel):
     root: List[ArxivArticle]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterable[ArxivArticle]:
         return iter(self.root)
 
-    def __getitem__(self, item):
+    def __getitem__(self, item) -> ArxivArticle:
         return self.root[item]

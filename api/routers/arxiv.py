@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from core.redis import RedisCache
+from core.schema.arxiv import ArxivArticle, ArxivArticlesList
+from core.schema.pagination import Pagination
 
 from ..dependencies import get_cache
 from ..lib.arxiv import get_arxiv_feed
-from ..schema.arxiv import ArxivArticle, ArxivArticlesList
-from ..schema.pagination import Pagination
 
 router = APIRouter(
     prefix="/arxiv",

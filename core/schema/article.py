@@ -1,4 +1,4 @@
-from typing import List
+from typing import Iterable, List
 
 from pydantic import AwareDatetime, BaseModel, RootModel
 
@@ -21,8 +21,8 @@ class Article(CreateArticle):
 class ArticlesList(RootModel):
     root: List[Article]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterable[Article]:
         return iter(self.root)
 
-    def __getitem__(self, item):
+    def __getitem__(self, item) -> Article:
         return self.root[item]
