@@ -12,5 +12,15 @@ class Settings(BaseSettings):
     REDIS_DB: int = 0
     REDIS_PASSWORD: str = ""
 
+    SUMMARIZER_MODEL: str = "Falconsai/text_summarization"
+    EMBEDDING_MODEL: str = "all-MiniLM-L6-v2"
+    EMBEDDING_DIM: int = 384
+
+    CELERY_BROKER_URL: str = "redis://localhost:6379/1"
+    CELERY_RESULT_BACKEND: str = "redis://localhost:6379/2"
+
+    SUMMARIZER_URL: str = "http://localhost:9000/summarize/"
+    EMBEDDING_URL: str = "http://localhost:9001/embedding/"
+
 
 settings = Settings()

@@ -40,6 +40,11 @@ fastapi = "^0.108.0"
 uvicorn = "^0.25.0"
 redis = "^5.0.1"
 
+
+[tool.poetry.group.workers.dependencies]
+celery = {extras = ["redis"], version = "^5.3.6"}
+flower = "^2.0.1"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

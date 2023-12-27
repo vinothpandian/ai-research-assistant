@@ -4,6 +4,7 @@ from pydantic import AwareDatetime, BaseModel, RootModel
 
 
 class CreateArticle(BaseModel):
+    arxiv_id: str
     title: str
     abstract: str
     link: str
