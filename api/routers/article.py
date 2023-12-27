@@ -15,7 +15,10 @@ router = APIRouter(
 
 @router.get("/")
 async def get_articles(start: int = 0, limit: int = 10, db: ArticleDB = Depends(get_articles_db)):
-    return db.get_articles(start=start, limit=limit)
+    try:
+        return db.get_articles(start=start, limit=limit)
+    except ClientResponseError as e:
+        raise HTTPException(status_code=e.status, detail=str(e.data))
 
 
 @router.post("/add/")

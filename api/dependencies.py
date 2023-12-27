@@ -4,6 +4,7 @@ from core.redis import RedisCache
 from core.settings import settings
 
 from .lib.db import ArticleDB
+from .lib.vector_db import VectorDB
 
 
 def get_cache() -> RedisCache:
@@ -23,3 +24,12 @@ def get_articles_db() -> pocketbase.PocketBase:
         yield article_db
     finally:
         article_db.disconnect()
+
+
+def get_vector_db():
+    vector_db = VectorDB(settings=settings)
+
+    try:
+        yield vector_db
+    finally:
+        vector_db.disconnect()
