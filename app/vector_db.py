@@ -1,7 +1,7 @@
 from qdrant_client import QdrantClient, models
 from sentence_transformers import SentenceTransformer
 
-from app.settings import settings
+from core.settings import settings
 
 encoder = SentenceTransformer("all-MiniLM-L6-v2")
 
