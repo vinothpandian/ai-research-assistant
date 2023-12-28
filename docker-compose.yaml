@@ -1,7 +1,6 @@
 version: "3.8"
 
 services:
-
   pocketbase:
     container_name: pocketbase
     build:
@@ -39,17 +38,33 @@ services:
     ports:
       - "6333:6333"
 
-  ollama:
-    container_name: ollama
-    image: ollama/ollama:0.1.17
-    restart: always
-    volumes:
-      - ollama_data:/root/.ollama
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    env_file:
+      - .env
     ports:
-      - "11434:11434"
+      - "8000:80"
+    depends_on:
+      - pocketbase
+      - qdrant
+
+  worker:
+    container_name: worker
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    command: celery -A workers.app worker -l info
+    env_file:
+      - .env
+    depends_on:
+      - pocketbase
+      - qdrant
+      - redis
 
 volumes:
   pocketbase-data:
   redis_data:
   qdrant_data:
-  ollama_data:

@@ -9,8 +9,8 @@ from core.schema.article import CreateArticle
 from workers.tasks import delete_embeddings, generate_embeddings, generate_summary
 
 from ..dependencies import get_articles_db, get_vector_db
-from ..lib.db import ArticleDB
-from ..lib.vector_db import VectorDB
+from core.lib.db import ArticleDB
+from core.lib.vector_db import VectorDB
 
 router = APIRouter(
     prefix="/articles",

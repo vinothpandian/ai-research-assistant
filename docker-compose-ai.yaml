@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+
+  embedding-service:
+    container_name: embedding-service
+    build:
+      context: .
+      dockerfile: docker/ai.Dockerfile
+      target: ai
+      args:
+        - APP_NAME=embedding
+    ports:
+      - "9000:80"
+
+  qa-service:
+    container_name: qa-service
+    build:
+      context: .
+      dockerfile: docker/ai.Dockerfile
+      target: ai
+      args:
+        - APP_NAME=question_answering
+    ports:
+      - "9001:80"
+
+  ollama:
+    container_name: ollama
+    image: ollama/ollama:0.1.17
+    restart: always
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+
+  summarizer-service:
+    container_name: summarizer-service
+    build:
+      context: .
+      dockerfile: docker/ai.Dockerfile
+      target: ai
+      args:
+        - APP_NAME=summarizer
+    ports:
+      - "9002:80"
+
+volumes:
+  ollama_data:

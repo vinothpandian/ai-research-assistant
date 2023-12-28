@@ -1,8 +1,8 @@
 
 from celery import shared_task
 
-from api.lib.db import ArticleDB
-from api.lib.vector_db import VectorDB
+from core.lib.db import ArticleDB
+from core.lib.vector_db import VectorDB
 from core import ai
 from core.settings import settings
 
