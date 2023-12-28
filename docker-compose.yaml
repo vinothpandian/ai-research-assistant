@@ -17,7 +17,7 @@ services:
     image: redis:7.2.3-alpine
     restart: always
     env_file:
-      - .env
+      - .env.prod
     volumes:
       - redis_data:/var/lib/redis/data/
       - ./config/redis.conf:/usr/local/etc/redis/redis.conf
@@ -32,7 +32,7 @@ services:
     image: qdrant/qdrant:v1.7.3
     restart: always
     env_file:
-      - .env
+      - .env.prod
     volumes:
       - qdrant_data:/qdrant/storage:z
     ports:
@@ -44,7 +44,7 @@ services:
       context: .
       dockerfile: docker/api.Dockerfile
     env_file:
-      - .env
+      - .env.prod
     ports:
       - "8000:80"
     depends_on:
@@ -58,7 +58,7 @@ services:
       dockerfile: docker/api.Dockerfile
     command: celery -A workers.app worker -l info
     env_file:
-      - .env
+      - .env.prod
     depends_on:
       - pocketbase
       - qdrant
