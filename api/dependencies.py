@@ -1,10 +1,9 @@
 import pocketbase
 
-from core.redis import RedisCache
-from core.settings import settings
-
 from core.lib.db import ArticleDB
 from core.lib.vector_db import VectorDB
+from core.redis import RedisCache
+from core.settings import settings
 
 
 def get_cache() -> RedisCache:

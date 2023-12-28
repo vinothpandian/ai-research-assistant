@@ -5,12 +5,12 @@ from pocketbase.utils import ClientResponseError
 from starlette.responses import StreamingResponse
 
 from core import ai
+from core.lib.db import ArticleDB
+from core.lib.vector_db import VectorDB
 from core.schema.article import CreateArticle
 from workers.tasks import delete_embeddings, generate_embeddings, generate_summary
 
 from ..dependencies import get_articles_db, get_vector_db
-from core.lib.db import ArticleDB
-from core.lib.vector_db import VectorDB
 
 router = APIRouter(
     prefix="/articles",
@@ -49,16 +49,18 @@ def remove_article(article_id: str, db: ArticleDB = Depends(get_articles_db)):
 
 
 @router.get("/search/")
-def search_articles(question: str,
-                    score_threshold: Annotated[float, Query(gt=0, lt=1)] = 0.25,
-                    with_answer: bool = False,
-                    db: ArticleDB = Depends(get_articles_db),
-                    vector_db: VectorDB = Depends(get_vector_db)):
+def search_articles(
+    question: str,
+    score_threshold: Annotated[float, Query(gt=0, lt=1)] = 0.25,
+    with_answer: bool = False,
+    db: ArticleDB = Depends(get_articles_db),
+    vector_db: VectorDB = Depends(get_vector_db),
+):
     try:
         vector = ai.get_embeddings(question)
         articles = vector_db.semantic_search(vector)
 
-        article_ids = [article.payload['id'] for article in articles if article.score > score_threshold]
+        article_ids = [article.payload["id"] for article in articles if article.score > score_threshold]
 
         if not article_ids:
             return HTTPException(status_code=404, detail="No relevant articles found for the given question")

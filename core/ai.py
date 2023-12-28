@@ -42,45 +42,43 @@ def generate_question_answer_prompt(question: str, articles: ArticlesList) -> st
     if MODEL_TYPE == "summarizer":
         return prompt
 
-    return f"""Answer the question based on the context given below. The answer should only contain information that is present in the context. The answer should not contain any information that is not present in the context. # noqa
+    return f"""Answer the question based on the context given below. The answer should only contain information that is present in the context. The answer should not contain any information that is not present in the context.
 
     ###
-    {prompt}"""
+    {prompt}"""  # noqa: E501
 
 
 def get_summary(prompt: str):
-    data = {'model': settings.SUMMARIZER_MODEL, 'prompt': prompt, 'stream': False}
+    data = {"model": settings.SUMMARIZER_MODEL, "prompt": prompt, "stream": False}
 
     logger.debug(f"Sending request to {settings.SUMMARIZER_URL} with data {data}")
 
     response = httpx.post(settings.SUMMARIZER_URL, json=data, timeout=None)
     response.raise_for_status()
     result = response.json()
-    return result['response']
+    return result["response"]
 
 
 def get_answer_from_context(prompt: str):
-    data = {'prompt': prompt}
+    data = {"prompt": prompt}
 
     logger.debug(f"Sending request to {settings.QA_URL} with data {data}")
 
     response = httpx.post(settings.QA_URL, json=data, timeout=None)
     response.raise_for_status()
     result = response.json()
-    return result['response']
+    return result["response"]
 
 
 def get_embeddings(prompt: str):
-    data = {'model': settings.EMBEDDING_MODEL,
-            'prompt': prompt,
-            'stream': False}
+    data = {"model": settings.EMBEDDING_MODEL, "prompt": prompt, "stream": False}
 
     logger.debug(f"Sending request to {settings.EMBEDDING_URL} with data {data}")
 
     response = httpx.post(settings.EMBEDDING_URL, json=data, timeout=None)
     response.raise_for_status()
     result = response.json()
-    return result['embedding']
+    return result["embedding"]
 
 
 async def get_answer(question: str, articles: ArticlesList, with_answer: bool = False):
@@ -101,11 +99,11 @@ async def get_answer(question: str, articles: ArticlesList, with_answer: bool = 
         return
 
     async with httpx.AsyncClient() as client:
-        data = {'model': settings.QA_MODEL, 'prompt': question_prompt, 'stream': True}
+        data = {"model": settings.QA_MODEL, "prompt": question_prompt, "stream": True}
         logger.debug(f"Streaming response from {settings.QA_URL} with data {data}")
         request = client.build_request("POST", settings.QA_URL, json=data, timeout=None)
         r = await client.send(request, stream=True)
         async for chunk in r.aiter_text():
             with contextlib.suppress(JSONDecodeError):
                 json_chunk = json.loads(chunk)
-                yield json.dumps(dict(answer=json_chunk['response']))
+                yield json.dumps(dict(answer=json_chunk["response"]))
