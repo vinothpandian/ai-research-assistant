@@ -56,7 +56,7 @@ services:
     build:
       context: .
       dockerfile: docker/api.Dockerfile
-    command: celery -A workers.app worker -l info
+    command: celery -A workers.app worker -l debug
     env_file:
       - .env.prod
     depends_on:

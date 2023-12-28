@@ -17,7 +17,6 @@ WORKDIR /app
 
 COPY core ./core
 COPY pyproject.toml poetry.lock ./
-COPY .env ./.env
 
 RUN poetry install --only core --no-root
 
