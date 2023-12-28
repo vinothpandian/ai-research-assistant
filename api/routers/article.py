@@ -26,7 +26,7 @@ async def get_articles(start: int = 0, limit: int = 10, db: ArticleDB = Depends(
         raise HTTPException(status_code=e.status, detail=str(e.data))
 
 
-@router.post("/add/")
+@router.post("/")
 def add_article(article: CreateArticle, db: ArticleDB = Depends(get_articles_db)):
     try:
         record = db.create_article(article)
@@ -37,7 +37,7 @@ def add_article(article: CreateArticle, db: ArticleDB = Depends(get_articles_db)
         raise HTTPException(status_code=e.status, detail=str(e.data))
 
 
-@router.delete("/remove/")
+@router.delete("/")
 def remove_article(article_id: str, db: ArticleDB = Depends(get_articles_db)):
     try:
         vector_id = db.get_article(article_id).vector_id
@@ -51,6 +51,7 @@ def remove_article(article_id: str, db: ArticleDB = Depends(get_articles_db)):
 @router.get("/search/")
 def search_articles(question: str,
                     score_threshold: Annotated[float, Query(gt=0, lt=1)] = 0.25,
+                    with_answer: bool = False,
                     db: ArticleDB = Depends(get_articles_db),
                     vector_db: VectorDB = Depends(get_vector_db)):
     try:
@@ -63,8 +64,7 @@ def search_articles(question: str,
             return HTTPException(status_code=404, detail="No relevant articles found for the given question")
 
         articles = db.get_articles_by_ids(article_ids)
-        question_prompt = ai.generate_question_answer_prompt(question, articles)
 
-        return StreamingResponse(ai.get_answer(prompt=question_prompt), media_type="text/plain")
+        return StreamingResponse(ai.get_answer(question, articles, with_answer), media_type="application/json")
     except ClientResponseError as e:
         raise HTTPException(status_code=e.status, detail=str(e.data))

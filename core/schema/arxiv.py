@@ -1,6 +1,8 @@
-from typing import List, Iterable
+from typing import Annotated, Iterable, List
 
-from pydantic import AwareDatetime, BaseModel, RootModel
+from pydantic import AfterValidator, AwareDatetime, BaseModel, RootModel
+
+from ..lib.text import clean_text
 
 
 class Author(BaseModel):
@@ -9,8 +11,8 @@ class Author(BaseModel):
 
 class ArxivArticle(BaseModel):
     id: str
-    title: str
-    summary: str
+    title: Annotated[str, AfterValidator(clean_text)]
+    summary: Annotated[str, AfterValidator(clean_text)]
     link: str
     authors: List[Author]
     published: AwareDatetime

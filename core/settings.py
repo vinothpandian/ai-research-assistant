@@ -14,6 +14,7 @@ class Settings(BaseSettings):
 
     SUMMARIZER_MODEL: str = "Falconsai/text_summarization"
     EMBEDDING_MODEL: str = "all-MiniLM-L6-v2"
+    QA_MODEL: str = "google/flan-t5-base"
     EMBEDDING_DIM: int = 384
 
     CELERY_BROKER_URL: str = "redis://localhost:6379/1"
@@ -21,6 +22,7 @@ class Settings(BaseSettings):
 
     SUMMARIZER_URL: str = "http://localhost:9000/summarize/"
     EMBEDDING_URL: str = "http://localhost:9001/embedding/"
+    QA_URL: str = "http://localhost:9002/answer/"
 
 
 settings = Settings()

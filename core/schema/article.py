@@ -1,12 +1,14 @@
-from typing import Iterable, List
+from typing import Annotated, Iterable, List
 
-from pydantic import AwareDatetime, BaseModel, RootModel
+from pydantic import AfterValidator, AwareDatetime, BaseModel, RootModel
+
+from core.lib.text import clean_text
 
 
 class CreateArticle(BaseModel):
     arxiv_id: str
-    title: str
-    abstract: str
+    title: Annotated[str, AfterValidator(clean_text)]
+    abstract: Annotated[str, AfterValidator(clean_text)]
     link: str
     published: AwareDatetime
     authors: List[str]

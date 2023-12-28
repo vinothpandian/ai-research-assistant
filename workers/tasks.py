@@ -1,9 +1,9 @@
+
 from celery import shared_task
 
 from api.lib.db import ArticleDB
 from api.lib.vector_db import VectorDB
 from core import ai
-from core.schema.ai import ModelType
 from core.settings import settings
 
 article_db = ArticleDB(settings)
@@ -14,22 +14,18 @@ vector_db = VectorDB(settings)
 def generate_summary(article_id: str):
     article = article_db.get_article(article_id)
 
-    model_type: ModelType = "summarizer"
-    if settings.EMBEDDING_MODEL in {"llama2"}:
-        model_type = "general"
+    prompt = ai.generate_summarization_prompt(article)
+    summary = ai.get_summary(prompt)
 
-    prompt = ai.generate_summarization_prompt(article, model_type)
-    result = ai.get_summary(prompt)
-
-    article_db.update_article(article_id, ai_summary=result['response'])
+    article_db.update_article(article_id, ai_summary=summary)
 
 
 @shared_task
 def generate_embeddings(article_id: str):
     article = article_db.get_article(article_id)
-    result = ai.get_embeddings(f"{article.title}\n\n{article.abstract}")
+    vector = ai.get_embeddings(f"{article.title}\n\n{article.abstract}")
 
-    vector_id = vector_db.save_article(article, result['embedding'])
+    vector_id = vector_db.save_article(article, vector)
     article_db.update_article(article_id, vector_id=vector_id)
 
 

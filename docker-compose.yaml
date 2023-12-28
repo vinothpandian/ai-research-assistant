@@ -45,7 +45,6 @@ services:
     restart: always
     volumes:
       - ollama_data:/root/.ollama
-    entrypoint: docker/ollama.entrypoint.sh
     ports:
       - "11434:11434"
 

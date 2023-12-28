@@ -21,6 +21,7 @@ jupyter = "^1.0.0"
 [tool.poetry.group.core.dependencies]
 pydantic = "^2.5.3"
 pydantic-settings = "^2.1.0"
+loguru = "^0.7.2"
 
 
 [tool.poetry.group.app.dependencies]
