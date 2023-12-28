@@ -14,3 +14,6 @@ install_all_dependencies:
 
 run_all_services_in_docker:
 	docker-compose up --build -d
+
+run_app:
+	poetry run -- streamlit run app/Home.py
