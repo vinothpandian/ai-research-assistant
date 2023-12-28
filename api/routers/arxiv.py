@@ -14,14 +14,16 @@ router = APIRouter(
 
 
 @router.get("/search/")
-async def search_arxiv(q: str | None = None, start: int = 0, limit: int = 10, cache: RedisCache = Depends(get_cache)):
+async def search_arxiv(
+    q: str | None = None, start: int = 0, limit: int = 10, mock: bool = True, cache: RedisCache = Depends(get_cache)
+):
     if not q:
         raise HTTPException(status_code=400, detail="Query is required")
 
     if value := cache.get([q, start, limit]):
         return value
 
-    feed = get_arxiv_feed(q, start, limit, mock=True)
+    feed = get_arxiv_feed(q, start, limit, mock)
 
     total_items = feed.get("feed", {}).get("opensearch_totalresults", 0)
     articles = ArxivArticlesList.model_validate(feed.get("entries", []))

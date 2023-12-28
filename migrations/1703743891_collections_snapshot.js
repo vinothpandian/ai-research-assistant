@@ -69,13 +69,14 @@ migrate((db) => {
           "system": false,
           "id": "pvygqjpd",
           "name": "published",
-          "type": "date",
+          "type": "text",
           "required": false,
           "presentable": false,
           "unique": false,
           "options": {
-            "min": "",
-            "max": ""
+            "min": null,
+            "max": null,
+            "pattern": ""
           }
         },
         {

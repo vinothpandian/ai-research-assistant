@@ -24,6 +24,7 @@ httpx = ">=0.24.1,<0.25.0"
 ruff = "^0.1.9"
 pre-commit = "^3.6.0"
 jupyter = "^1.0.0"
+datasets = "^2.16.0"
 
 
 [tool.poetry.group.app.dependencies]
