@@ -26,3 +26,9 @@ class ArxivArticlesList(RootModel):
 
     def __getitem__(self, item) -> ArxivArticle:
         return self.root[item]
+
+    def __len__(self) -> int:
+        return len(self.root)
+
+    def __bool__(self) -> bool:
+        return bool(self.root)

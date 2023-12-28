@@ -41,5 +41,5 @@ class Prompt(BaseModel):
 async def summarize(data: Prompt, model=Depends(get_model)):
     summaries = model(data.prompt, max_length=data.max_length, min_length=data.min_length, do_sample=False)
     return {
-        "response": summaries[0]['summary_text'],
+        "response": summaries[0]["summary_text"],
     }

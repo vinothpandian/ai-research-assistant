@@ -24,5 +24,8 @@ class Settings(BaseSettings):
     EMBEDDING_URL: str = "http://localhost:9001/embedding/"
     QA_URL: str = "http://localhost:9002/answer/"
 
+    API_HOST: str = "http://localhost"
+    API_PORT: int = 8000
+
 
 settings = Settings()

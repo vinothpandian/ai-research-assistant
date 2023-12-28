@@ -37,5 +37,5 @@ class Prompt(BaseModel):
 async def answer(data: Prompt, model=Depends(get_model)):
     result = model(data.prompt)
     return {
-        "response": result[0]['generated_text']
+        "response": result[0]["generated_text"],
     }

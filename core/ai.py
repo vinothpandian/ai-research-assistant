@@ -6,11 +6,11 @@ import httpx
 from loguru import logger
 
 from core.schema.ai import ModelType
-from core.schema.article import Article, ArticlesList
+from core.schema.article import Article, ArticlesWithScoreList
 from core.settings import settings
 
 MODEL_TYPE: ModelType = "summarizer"
-if settings.EMBEDDING_MODEL in {"llama2", "dolphin-phi", "phi", "mistral"}:
+if settings.EMBEDDING_MODEL in {"llama2", "dolphin-phi", "phi", "mistral", "orca-mini"}:
     MODEL_TYPE = "general"
 
 
@@ -30,7 +30,7 @@ def generate_summarization_prompt(article: Article) -> str:
     """
 
 
-def generate_question_answer_prompt(question: str, articles: ArticlesList) -> str:
+def generate_question_answer_prompt(question: str, articles: ArticlesWithScoreList) -> str:
     abstracts = "\n\n".join([article.abstract for article in articles])
 
     prompt = f"""Context: {abstracts}
@@ -81,10 +81,8 @@ def get_embeddings(prompt: str):
     return result["embedding"]
 
 
-async def get_answer(question: str, articles: ArticlesList, with_answer: bool = False):
-    response = dict(
-        articles=articles.model_dump(mode="json"),
-    )
+async def get_answer(question: str, articles: ArticlesWithScoreList, with_answer: bool = False):
+    response = dict(articles=articles.model_dump(mode="json"))
 
     yield json.dumps(response)
 

@@ -24,7 +24,7 @@ async def search_arxiv(q: str | None = None, start: int = 0, limit: int = 10, ca
     feed = get_arxiv_feed(q, start, limit, mock=True)
 
     total_items = feed.get("feed", {}).get("opensearch_totalresults", 0)
-    articles = ArxivArticlesList.model_validate(feed.get('entries', []))
+    articles = ArxivArticlesList.model_validate(feed.get("entries", []))
 
     response = Pagination[ArxivArticle](
         total_items=total_items,

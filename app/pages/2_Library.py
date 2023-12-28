@@ -1,29 +1,37 @@
 import streamlit as st
 
-from app.db import db
-from app.vector_db import vector_db
+from app.lib.app import api_client
 
-st.set_page_config(page_title="Library", page_icon="📚")
+st.set_page_config(page_title="Research Assistant", page_icon="🥼")
 
-st.title("Your library")
+st.header("Your library")
 
-articles = db.get_articles()
+data = api_client.get_articles()
+st.write(f"Total articles: {data.total_items}")
+st.divider()
 
-def remove_article(article):
+
+def remove_article(article_id: str):
     try:
-        db.remove_article(article)
-        vector_db.remove_article(article)
+        api_client.delete_article(article_id)
         st.toast("Article removed")
     except Exception as e:
         st.error(f"Error removing article: {e}")
 
-for i, article in enumerate(articles):
+
+for article in data.items:
     with st.container():
-        st.header(article.title)
-        st.caption(", ".join(author['name'] for author in article.authors))
+        st.subheader(article.title)
+        st.caption(", ".join(article.authors))
         st.write(article.link)
-        st.caption(article.summary)
+        st.caption(article.ai_summary)
         columns = st.columns(4)
-        columns[-1].button("Remove from library", key=f"save_{i}", use_container_width=True, on_click=remove_article,
-                           args=(article,))
+        columns[-1].button(
+            "Remove from library",
+            key=f"save_{article.id}",
+            use_container_width=True,
+            on_click=remove_article,
+            type="primary",
+            args=(article.id,),
+        )
         st.divider()

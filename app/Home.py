@@ -1,82 +1,73 @@
 import contextlib
-import json
 
-import httpx
 import streamlit as st
 
-from core.schema.article import ArticlesList
+from app.lib.app import api_client
+from core.schema.article import ArticlesWithScoreList
 
 st.set_page_config(page_title="Research Assistant", page_icon="🥼")
 
-st.header("Search through your research papers")
-
+st.header("Search through your library")
 
 search_option = st.radio(
-    "",
+    "Search option",
     ["Semantic search", "Ask a question"],
     horizontal=True,
 )
-question = st.text_input(search_option)
-score_threshold = st.slider("Search match threshold", 0.0, 1.0, 0.25, 0.05)
+question = st.text_input(label=search_option)
+score_threshold = 0.1
+
+with st.expander("Advanced options"):
+    score_threshold = st.slider("Search match threshold", 0.0, 1.0, 0.1, 0.05)
+
+title = ""
 
 
-answer = ""
-items = []
+def render_articles(articles: ArticlesWithScoreList):
+    st.divider()
 
-if not question:
-    response = httpx.get("http://localhost:8000/articles/").json()
-    items = response["items"]
+    if len(articles) > 0:
+        st.markdown(f"**Found {len(articles)} results**")
+
+    if len(articles) == 0 and question:
+        st.write("No results found")
+
+    if len(articles) == 0 and not question:
+        st.write("Your library is empty")
+
+    for article in articles:
+        with st.container():
+            st.subheader(article.title)
+            st.caption(", ".join(article.authors))
+            with contextlib.suppress(AttributeError):
+                st.write("Similarity score: ", article.score)
+            st.write(article.link)
+            st.caption(article.ai_summary)
+            st.divider()
 
 
 if question and search_option == "Semantic search":
-    response = httpx.get(
-        "http://localhost:8000/articles/search/",
-        params={
-            "question": question,
-            "score_threshold": score_threshold,
-            "with_answer": False,
-        },
-    ).json()
-    items = response.get("articles", [])
+    result = api_client.semantic_search(question, score_threshold, with_answer=False)
+    data = next(iter(result), [])
+    render_articles(data)
 
+placeholder = st.empty()
 if question and search_option == "Ask a question":
-    with httpx.stream(
-        "GET",
-        "http://localhost:8000/articles/search/",
-        params={
-            "question": question,
-            "score_threshold": score_threshold,
-            "with_answer": True,
-        },
-    ) as response:
-        first_response = False
+    search_results = []
+    answer = ""
+    result = api_client.semantic_search(question, score_threshold, with_answer=True)
+    container = placeholder.container(border=True)
+    container.subheader("Answer")
+    answer_placeholder = container.empty()
+    answer_placeholder.write("Loading...")
+    for i, item in enumerate(result):
+        if i == 0:
+            search_results = item
+            render_articles(search_results)
+            continue
 
-        for line in response.iter_text():
-            if not first_response:
-                items = json.loads(line).get("articles", [])
-                first_response = True
-                continue
+        answer += item
+        answer_placeholder.write(answer)
 
-            with contextlib.suppress(json.JSONDecodeError):
-                part_answer = json.loads(line).get("answer", "")
-                answer += part_answer
-
-
-if answer and search_option == "Ask a question":
-    with st.container(border=True):
-        st.write("Answer to your question")
-        st.caption(answer)
-
-articles = ArticlesList.model_validate(items)
-for article in articles:
-    with st.container():
-        st.header(article.title)
-        st.caption(", ".join(article.authors))
-        st.write(article.link)
-        st.write("AI Generated Summary")
-        st.caption(article.ai_summary)
-        st.divider()
-
-
-if not items:
-    st.write("No results found")
+if title:
+    st.header(title)

@@ -20,6 +20,10 @@ class Article(CreateArticle):
     vector_id: str = ""
 
 
+class ArticleWithScore(Article):
+    score: float
+
+
 class ArticlesList(RootModel):
     root: List[Article]
 
@@ -28,3 +32,22 @@ class ArticlesList(RootModel):
 
     def __getitem__(self, item) -> Article:
         return self.root[item]
+
+    def __len__(self) -> int:
+        return len(self.root)
+
+    def __bool__(self) -> bool:
+        return bool(self.root)
+
+
+class ArticlesWithScoreList(RootModel):
+    root: List[ArticleWithScore]
+
+    def __iter__(self) -> Iterable[Article]:
+        return iter(self.root)
+
+    def __len__(self) -> int:
+        return len(self.root)
+
+    def __bool__(self) -> bool:
+        return bool(self.root)

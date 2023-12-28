@@ -20,46 +20,28 @@ redis = "^5.0.1"
 httpx = ">=0.24.1,<0.25.0"
 
 
-[tool.poetry.group.dev]
-optional = true
-
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.9"
 pre-commit = "^3.6.0"
 jupyter = "^1.0.0"
 
 
-[tool.poetry.group.app]
-optional = true
-
 [tool.poetry.group.app.dependencies]
 streamlit = "^1.29.0"
 watchdog = "^3.0.0"
 
 
-[tool.poetry.group.ai]
-optional = true
-
 [tool.poetry.group.ai.dependencies]
 sentence-transformers = "^2.2.2"
 
-
-[tool.poetry.group.core-api]
-optional = true
 
 [tool.poetry.group.core-api.dependencies]
 fastapi = "^0.108.0"
 uvicorn = "^0.25.0"
 
 
-[tool.poetry.group.api]
-optional = true
-
 [tool.poetry.group.api.dependencies]
 feedparser = "^6.0.11"
-
-[tool.poetry.group.workers]
-optional = true
 
 [tool.poetry.group.workers.dependencies]
 celery = { extras = ["redis"], version = "^5.3.6" }
@@ -80,6 +62,8 @@ select = [
     "E",
     "W",
     # isort
-    "I001"
+    "I001",
+    # Pylint
+    "PL"
 ]
 

@@ -9,11 +9,8 @@ run_embedding_service:
 run_question_answering_service:
 	poetry run -- uvicorn ai.question_answering:app --workers 1 --port 9002
 
-install_all_dependencies:
-	poetry install --with core,dev,app,ai,api,core-api,workers
-
 run_all_services_in_docker:
 	docker-compose up --build -d
 
 run_app:
-	poetry run -- streamlit run app/Home.py
+	poetry run -- python -m streamlit run app/Home.py

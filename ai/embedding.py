@@ -40,5 +40,5 @@ class Prompt(BaseModel):
 @app.post("/embedding/")
 async def get_embedding(data: Prompt, encoder: SentenceTransformer = Depends(get_encoder)):
     return {
-        "embedding": encoder.encode(data.prompt).tolist()
+        "embedding": encoder.encode(data.prompt).tolist(),
     }
