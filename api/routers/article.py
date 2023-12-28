@@ -1,6 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
-from pocketbase.utils import ClientResponseError
+from typing import Annotated
 
+from fastapi import APIRouter, Depends, HTTPException, Query
+from pocketbase.utils import ClientResponseError
+from starlette.responses import StreamingResponse
+
+from core import ai
 from core.schema.article import CreateArticle
 from workers.tasks import delete_embeddings, generate_embeddings, generate_summary
 
@@ -45,9 +49,22 @@ def remove_article(article_id: str, db: ArticleDB = Depends(get_articles_db)):
 
 
 @router.get("/search/")
-def search_articles(q: str, db: ArticleDB = Depends(get_articles_db), vector_db: VectorDB = Depends(get_vector_db)):
+def search_articles(question: str,
+                    score_threshold: Annotated[float, Query(gt=0, lt=1)] = 0.25,
+                    db: ArticleDB = Depends(get_articles_db),
+                    vector_db: VectorDB = Depends(get_vector_db)):
     try:
-        articles = vector_db.semantic_search(q, vector)
-        return db.search_articles(q)
+        vector = ai.get_embeddings(question)
+        articles = vector_db.semantic_search(vector)
+
+        article_ids = [article.payload['id'] for article in articles if article.score > score_threshold]
+
+        if not article_ids:
+            return HTTPException(status_code=404, detail="No relevant articles found for the given question")
+
+        articles = db.get_articles_by_ids(article_ids)
+        question_prompt = ai.generate_question_answer_prompt(question, articles)
+
+        return StreamingResponse(ai.get_answer(prompt=question_prompt), media_type="text/plain")
     except ClientResponseError as e:
         raise HTTPException(status_code=e.status, detail=str(e.data))

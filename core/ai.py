@@ -1,12 +1,18 @@
+import json
+
 import httpx
 
 from core.schema.ai import ModelType
 from core.schema.article import Article, ArticlesList
 from core.settings import settings
 
+MODEL_TYPE: ModelType = "summarizer"
+if settings.EMBEDDING_MODEL in {"llama2"}:
+    MODEL_TYPE = "general"
 
-def generate_summarization_prompt(article: Article, model_type: ModelType = "summarizer") -> str:
-    if model_type == "summarizer":
+
+def generate_summarization_prompt(article: Article) -> str:
+    if MODEL_TYPE == "summarizer":
         return article.abstract
 
     return f""""
@@ -21,9 +27,9 @@ def generate_summarization_prompt(article: Article, model_type: ModelType = "sum
     """
 
 
-def generate_question_answer_prompt(question: str, articles: ArticlesList, model_type: ModelType = "summarizer") -> str:
+def generate_question_answer_prompt(question: str, articles: ArticlesList) -> str:
     abstracts = "\n\n".join([article.abstract for article in articles])
-    if model_type == "summarizer":
+    if MODEL_TYPE == "summarizer":
         return abstracts
 
     return f""""
@@ -45,8 +51,8 @@ def get_summary(prompt: str):
 
     response = httpx.post(settings.SUMMARIZER_URL, json=data, timeout=None)
     response.raise_for_status()
-
-    return response.json()
+    result = response.json()
+    return result['response']
 
 
 def get_embeddings(prompt: str):
@@ -56,5 +62,19 @@ def get_embeddings(prompt: str):
 
     response = httpx.post(settings.EMBEDDING_URL, json=data, timeout=None)
     response.raise_for_status()
+    result = response.json()
+    return result['embedding']
 
-    return response.json()
+
+async def get_answer(prompt: str):
+    if MODEL_TYPE == "summarizer":
+        yield get_summary(prompt)
+        return
+
+    async with httpx.AsyncClient() as client:
+        data = {'model': settings.SUMMARIZER_MODEL, 'prompt': prompt, 'stream': True}
+        request = client.build_request("POST", settings.SUMMARIZER_URL, json=data)
+        r = await client.send(request, stream=True)
+        async for chunk in r.aiter_text():
+            json_chunk = json.loads(chunk)
+            yield json_chunk['response']
