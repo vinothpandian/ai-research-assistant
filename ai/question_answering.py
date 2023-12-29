@@ -22,7 +22,7 @@ app = FastAPI(
 
 
 def get_model():
-    model = pipeline("text2text-generation", model=settings.QA_MODEL)
+    model = pipeline("text2text-generation", model=settings.qa.model)
     try:
         yield model
     finally:

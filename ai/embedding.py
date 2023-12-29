@@ -22,11 +22,11 @@ app = FastAPI(
 
 
 def get_encoder() -> SentenceTransformer:
-    encoder = SentenceTransformer(settings.EMBEDDING_MODEL)
+    encoder = SentenceTransformer(settings.embedding.model)
 
     try:
-        if encoder.get_sentence_embedding_dimension() != settings.EMBEDDING_DIM:
-            raise ValueError(f"Embedding encoder should have {settings.EMBEDDING_DIM} dimensions")
+        if encoder.get_sentence_embedding_dimension() != settings.embedding.dim:
+            raise ValueError(f"Embedding encoder should have {settings.embedding.dim} dimensions")
 
         yield encoder
     finally:

@@ -9,14 +9,14 @@ from core.settings import Settings
 
 class BaseAIEngine:
     def __init__(self, settings: Settings):
-        self.SUMMARIZER_URL = settings.SUMMARIZER_URL
-        self.SUMMARIZER_MODEL = settings.SUMMARIZER_MODEL
+        self.summarizer_url = settings.summarizer.url
+        self.summarizer_model = settings.summarizer.model
 
-        self.EMBEDDING_URL = settings.EMBEDDING_URL
-        self.EMBEDDING_MODEL = settings.EMBEDDING_MODEL
+        self.embedding_url = settings.embedding.url
+        self.embedding_model = settings.embedding.model
 
-        self.QA_URL = settings.QA_URL
-        self.QA_MODEL = settings.QA_MODEL
+        self.qa_url = settings.qa.url
+        self.qa_model = settings.qa.model
 
     def get_summarization_request_data(self, article: Article) -> Dict[str, str]:
         return {"prompt": article.abstract}
@@ -46,7 +46,7 @@ class BaseAIEngine:
     def get_summary(self, article: Article):
         data = self.get_summarization_request_data(article)
 
-        response = httpx.post(self.SUMMARIZER_URL, json=data, timeout=None)
+        response = httpx.post(self.summarizer_url, json=data, timeout=None)
         response.raise_for_status()
         result = response.json()
         return result["response"]
@@ -54,7 +54,7 @@ class BaseAIEngine:
     def get_embeddings(self, text: str):
         data = self.get_embeddings_request_data(text)
 
-        response = httpx.post(self.EMBEDDING_URL, json=data, timeout=None)
+        response = httpx.post(self.embedding_url, json=data, timeout=None)
         response.raise_for_status()
         result = response.json()
         return result["embedding"]
@@ -62,7 +62,7 @@ class BaseAIEngine:
     def __get_answer_from_context(self, question: str, articles: ArticlesWithScoreList):
         data = self.get_question_answer_request_data(question, articles)
 
-        response = httpx.post(self.QA_URL, json=data, timeout=None)
+        response = httpx.post(self.qa_url, json=data, timeout=None)
         response.raise_for_status()
         result = response.json()
         return result["response"]

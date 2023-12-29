@@ -8,9 +8,9 @@ class AIFactory:
     def __init__(self, settings: Settings):
         self.settings = settings
         self.engines = {
-            "SUMMARIZER_ENGINE": settings.SUMMARIZER_ENGINE,
-            "EMBEDDING_ENGINE": settings.EMBEDDING_ENGINE,
-            "QA_ENGINE": settings.QA_ENGINE,
+            "SUMMARIZER_ENGINE": settings.summarizer.type,
+            "EMBEDDING_ENGINE": settings.embedding.type,
+            "QA_ENGINE": settings.qa.type,
         }
 
     def create_engine(self, engine_type):

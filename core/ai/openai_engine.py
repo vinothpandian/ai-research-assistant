@@ -11,7 +11,7 @@ class OpenAIEngine(OllamaEngine):
     def __init__(self, settings: Settings):
         super().__init__(settings)
         self.client = OpenAI(
-            api_key=settings.OPENAI_KEY,
+            api_key=settings.openai.key,
         )
 
     def get_summary(self, article: Article):
@@ -32,7 +32,7 @@ class OpenAIEngine(OllamaEngine):
 
         # noinspection PyArgumentList
         response = self.client.completions.create(
-            model=self.SUMMARIZER_MODEL,
+            model=self.summarizer_model,
             messages=messages,
             stream=False,
         )
@@ -44,7 +44,7 @@ class OpenAIEngine(OllamaEngine):
         prompt = request_data["prompt"]
 
         # noinspection PyArgumentList
-        response = self.client.embeddings.create(model=self.EMBEDDING_MODEL, input=prompt, encoding_format="float")
+        response = self.client.embeddings.create(model=self.embedding_model, input=prompt, encoding_format="float")
 
         return response["embedding"]
 
@@ -80,7 +80,7 @@ class OpenAIEngine(OllamaEngine):
 
         # noinspection PyArgumentList
         response = self.client.completions.create(
-            model=self.QA_MODEL,
+            model=self.qa_model,
             messages=messages,
             stream=True,
         )

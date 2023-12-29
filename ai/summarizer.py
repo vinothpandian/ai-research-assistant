@@ -24,7 +24,7 @@ app = FastAPI(
 
 
 def get_model():
-    model = pipeline("summarization", model=settings.SUMMARIZER_MODEL)
+    model = pipeline("summarization", model=settings.summarizer.model)
     try:
         yield model
     finally:

@@ -22,11 +22,11 @@ class OllamaEngine(BaseAIEngine):
         should not contain any personal pronouns.
         """
 
-        return {"model": self.SUMMARIZER_MODEL, "prompt": prompt, "stream": False}
+        return {"model": self.summarizer_model, "prompt": prompt, "stream": False}
 
     def get_embeddings_request_data(self, text: str) -> Dict[str, str]:
         request_data = super().get_embeddings_request_data(text)
-        return {"model": self.EMBEDDING_MODEL, "prompt": request_data["prompt"], "stream": False}
+        return {"model": self.embedding_model, "prompt": request_data["prompt"], "stream": False}
 
     def get_question_answer_request_data(self, question: str, articles: ArticlesWithScoreList) -> Dict[str, str]:
         request_data = super().get_question_answer_request_data(question, articles)
@@ -36,7 +36,7 @@ class OllamaEngine(BaseAIEngine):
         ###
         {request_data['prompt']}"""  # noqa: E501
 
-        return {"model": self.QA_MODEL, "prompt": prompt, "stream": True}
+        return {"model": self.qa_model, "prompt": prompt, "stream": True}
 
     async def get_answer(self, question: str, articles: ArticlesWithScoreList, with_answer: bool = False):
         response = dict(articles=articles.model_dump(mode="json"))
@@ -49,7 +49,7 @@ class OllamaEngine(BaseAIEngine):
         data = self.get_question_answer_request_data(question, articles)
 
         async with httpx.AsyncClient() as client:
-            request = client.build_request("POST", self.QA_URL, json=data, timeout=None)
+            request = client.build_request("POST", self.qa_url, json=data, timeout=None)
             r = await client.send(request, stream=True)
             async for chunk in r.aiter_text():
                 with contextlib.suppress(JSONDecodeError):
