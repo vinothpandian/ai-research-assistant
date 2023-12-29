@@ -4,10 +4,34 @@ from app.lib.app import api_client
 
 st.set_page_config(page_title="Research Assistant", page_icon="🥼")
 
-st.header("Your library")
+if "start" not in st.session_state:
+    st.session_state.start = 0
+limit = 10
 
-data = api_client.get_articles()
+st.header("Your library")
+data = api_client.get_articles(start=st.session_state.start, limit=limit)
 st.write(f"Total articles: {data.total_items}")
+
+
+def go_to_next_page():
+    st.session_state.start += limit
+
+
+def go_to_previous_page():
+    st.session_state.start -= limit
+
+
+columns = st.columns(6)
+with columns[0]:
+    st.button("Prev", on_click=go_to_previous_page, disabled=st.session_state.start == 0, use_container_width=True)
+with columns[-1]:
+    st.button(
+        "Next",
+        on_click=go_to_next_page,
+        disabled=st.session_state.start + limit >= data.total_items,
+        use_container_width=True,
+    )
+
 st.divider()
 
 
@@ -27,12 +51,12 @@ for article in data.items:
         if not article.vector_id:
             st.text("Article not ready for semantic search yet")
 
-        hide_ai_summary = st.toggle("Hide AI summary", key=f"show_ai_{article.id}")
+        hide_ai_summary = st.toggle("Show abstract", key=f"show_ai_{article.id}")
         if hide_ai_summary:
             st.text("Abstract:")
             st.caption(article.abstract)
         elif article.ai_summary:
-            st.text("Summary:")
+            st.text("AI generated summary:")
             st.caption(article.ai_summary)
         else:
             st.caption("AI summary is being generated...")

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from .routers import article, arxiv
+from .routers import article, semantic_scholar
 
 app = FastAPI(
     title="AI Research Assistant",
@@ -18,5 +18,5 @@ app = FastAPI(
     docs_url="/",
 )
 
-app.include_router(arxiv.router)
+app.include_router(semantic_scholar.router)
 app.include_router(article.router)

@@ -13,8 +13,11 @@ vector_db = VectorDB(settings)
 def generate_summary(article_id: str):
     article = article_db.get_article(article_id)
 
-    prompt = ai.generate_summarization_prompt(article)
-    summary = ai.get_summary(prompt)
+    summary = ""
+
+    if article.abstract:
+        prompt = ai.generate_summarization_prompt(article)
+        summary = ai.get_summary(prompt)
 
     article_db.update_article(article_id, ai_summary=summary)
 
@@ -22,6 +25,7 @@ def generate_summary(article_id: str):
 @shared_task
 def generate_embeddings(article_id: str):
     article = article_db.get_article(article_id)
+
     vector = ai.get_embeddings(f"{article.title}\n\n{article.abstract}")
 
     vector_id = vector_db.save_article(article, vector)

@@ -42,7 +42,6 @@ uvicorn = "^0.25.0"
 
 
 [tool.poetry.group.api.dependencies]
-feedparser = "^6.0.11"
 
 [tool.poetry.group.workers.dependencies]
 celery = { extras = ["redis"], version = "^5.3.6" }
