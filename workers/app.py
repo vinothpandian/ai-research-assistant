@@ -1,7 +1,11 @@
-from celery import Celery
+import dramatiq
+from dramatiq.brokers.redis import RedisBroker
 
 from core.settings import settings
 
-celery_app = Celery(
-    "tasks", broker=settings.celery.broker_url, backend=settings.celery.result_backend, include=["workers.tasks"]
+redis_broker = RedisBroker(
+    host=settings.redis.host,
+    port=settings.redis.port,
 )
+
+dramatiq.set_broker(redis_broker)

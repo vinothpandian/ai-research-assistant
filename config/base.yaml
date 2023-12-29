@@ -2,19 +2,12 @@ redis:
   host: localhost
   port: 6379
   db: 0
-  password: Xz2nIEktE4
 
 qdrant:
   url: http://localhost:6333/
 
 pocketbase:
   url: http://localhost:8080/
-
-
-celery:
-  broker_url: redis://:Xz2nIEktE4@localhost:6379/1
-  result_backend: redis://:Xz2nIEktE4@localhost:6379/2
-
 
 api:
   url: http://localhost:8000/

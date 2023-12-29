@@ -18,7 +18,6 @@ class RedisCache:
             host=settings.redis.host,
             port=settings.redis.port,
             db=settings.redis.db,
-            password=settings.redis.password,
         )
 
     @property

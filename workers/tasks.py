@@ -1,4 +1,4 @@
-from celery import shared_task
+import dramatiq
 
 from core.ai.factory import AIFactory
 from core.lib.db import ArticleDB
@@ -13,7 +13,7 @@ summarizer_ai = ai_factory.create_engine("SUMMARIZER_ENGINE")
 embedding_ai = ai_factory.create_engine("EMBEDDING_ENGINE")
 
 
-@shared_task
+@dramatiq.actor()
 def generate_summary(article_id: str):
     article = article_db.get_article(article_id)
 
@@ -25,7 +25,7 @@ def generate_summary(article_id: str):
     article_db.update_article(article_id, ai_summary=summary)
 
 
-@shared_task
+@dramatiq.actor()
 def generate_embeddings(article_id: str):
     article = article_db.get_article(article_id)
 
@@ -35,6 +35,6 @@ def generate_embeddings(article_id: str):
     article_db.update_article(article_id, vector_id=vector_id)
 
 
-@shared_task
+@dramatiq.actor()
 def delete_embeddings(vector_id: str):
     vector_db.remove_article(vector_id)

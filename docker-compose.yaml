@@ -20,14 +20,11 @@ services:
     container_name: redis
     image: redis:7.2.3-alpine
     restart: always
-    env_file:
-      - .env
     volumes:
       - redis_data:/var/lib/redis/data/
       - ./config/redis.conf:/usr/local/etc/redis/redis.conf
     command: >
       /usr/local/etc/redis/redis.conf
-      --requirepass ${REDIS_PASSWORD}
     ports:
       - "6379:6379"
 

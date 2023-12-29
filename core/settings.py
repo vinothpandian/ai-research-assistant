@@ -9,7 +9,6 @@ class RedisSettings(BaseSettings):
     host: str = "localhost"
     port: int = 6379
     db: int = 0
-    password: str = ""
 
 
 class QdrantSettings(BaseSettings):
@@ -18,11 +17,6 @@ class QdrantSettings(BaseSettings):
 
 class PocketbaseSettings(BaseSettings):
     url: str = "http://localhost:8080/"
-
-
-class CelerySettings(BaseSettings):
-    broker_url: str = "redis://localhost:6379/1"
-    result_backend: str = "redis://localhost:6379/2"
 
 
 class APISettings(BaseSettings):
@@ -63,7 +57,6 @@ class Settings(BaseSettings):
     redis: RedisSettings = RedisSettings()
     qdrant: QdrantSettings = QdrantSettings()
     pocketbase: PocketbaseSettings = PocketbaseSettings()
-    celery: CelerySettings = CelerySettings()
     api: APISettings = APISettings()
     summarizer: SummarizerSettings = SummarizerSettings()
     embedding: EmbeddingSettings = EmbeddingSettings()
