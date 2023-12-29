@@ -31,7 +31,7 @@ class OpenAIEngine(OllamaEngine):
         ]
 
         # noinspection PyArgumentList
-        response = self.client.completions.create(
+        response = self.client.chat.completions.create(
             model=self.summarizer_model,
             messages=messages,
             stream=False,
@@ -79,7 +79,7 @@ class OpenAIEngine(OllamaEngine):
         ]
 
         # noinspection PyArgumentList
-        response = self.client.completions.create(
+        response = self.client.chat.completions.create(
             model=self.qa_model,
             messages=messages,
             stream=True,

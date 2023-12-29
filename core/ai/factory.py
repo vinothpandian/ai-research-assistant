@@ -1,3 +1,5 @@
+from loguru import logger
+
 from core.ai.base_engine import BaseAIEngine
 from core.ai.ollama_engine import OllamaEngine
 from core.ai.openai_engine import OpenAIEngine
@@ -18,6 +20,7 @@ class AIFactory:
             raise ValueError(f"Unknown engine type: {engine_type}")
 
         engine_name = self.engines[engine_type]
+        logger.debug(f"Creating engine {engine_name}")
         match engine_name:
             case "ollama":
                 return OllamaEngine(self.settings)

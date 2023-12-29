@@ -66,7 +66,10 @@ if question and search_option == "Ask a question":
             render_articles(search_results)
             continue
 
-        answer += item
+        if not item:
+            continue
+
+        answer += str(item)
         answer_placeholder.write(answer)
 
 if title:

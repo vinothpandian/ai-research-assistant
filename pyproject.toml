@@ -47,7 +47,7 @@ uvicorn = "^0.25.0"
 [tool.poetry.group.workers.dependencies]
 flower = "^2.0.1"
 openai = "^1.6.1"
-dramatiq = {extras = ["redis", "watch"], version = "^1.15.0"}
+celery = {extras = ["redis"], version = "^5.3.6"}
 
 [build-system]
 requires = ["poetry-core"]
