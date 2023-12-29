@@ -24,7 +24,19 @@ for article in data.items:
         st.subheader(article.title)
         st.caption(", ".join(article.authors))
         st.write(article.link)
-        st.caption(article.ai_summary)
+        if not article.vector_id:
+            st.text("Article not ready for semantic search yet")
+
+        hide_ai_summary = st.toggle("Hide AI summary", key=f"show_ai_{article.id}")
+        if hide_ai_summary:
+            st.text("Abstract:")
+            st.caption(article.abstract)
+        elif article.ai_summary:
+            st.text("Summary:")
+            st.caption(article.ai_summary)
+        else:
+            st.caption("AI summary is being generated...")
+
         columns = st.columns(4)
         columns[-1].button(
             "Remove from library",

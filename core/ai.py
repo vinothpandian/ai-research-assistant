@@ -5,17 +5,18 @@ from json import JSONDecodeError
 import httpx
 from loguru import logger
 
-from core.schema.ai import ModelType
 from core.schema.article import Article, ArticlesWithScoreList
 from core.settings import settings
 
-MODEL_TYPE: ModelType = "summarizer"
-if settings.EMBEDDING_MODEL in {"llama2", "dolphin-phi", "phi", "mistral", "orca-mini"}:
-    MODEL_TYPE = "general"
+LLMs = {"llama2", "dolphin-phi", "phi", "mistral", "orca-mini"}
+
+
+def is_hugging_face(model: str) -> bool:
+    return model not in LLMs
 
 
 def generate_summarization_prompt(article: Article) -> str:
-    if MODEL_TYPE == "summarizer":
+    if is_hugging_face(settings.SUMMARIZER_MODEL):
         return article.abstract
 
     return f""""
@@ -31,7 +32,12 @@ def generate_summarization_prompt(article: Article) -> str:
 
 
 def generate_question_answer_prompt(question: str, articles: ArticlesWithScoreList) -> str:
-    abstracts = "\n\n".join([article.abstract for article in articles])
+    abstracts = "\n\n".join(
+        [
+            f"Article #{i}:\nTitle: {article.title}\nAuthors:{article.authors}\nAbsract:{article.abstract}"
+            for i, article in enumerate(articles)
+        ]
+    )
 
     prompt = f"""Context: {abstracts}
 
@@ -39,7 +45,7 @@ def generate_question_answer_prompt(question: str, articles: ArticlesWithScoreLi
 
     Answer: """
 
-    if MODEL_TYPE == "summarizer":
+    if is_hugging_face(settings.QA_MODEL):
         return prompt
 
     return f"""Answer the question based on the context given below. The answer should only contain information that is present in the context. The answer should not contain any information that is not present in the context.
@@ -91,7 +97,7 @@ async def get_answer(question: str, articles: ArticlesWithScoreList, with_answer
 
     question_prompt = generate_question_answer_prompt(question, articles)
 
-    if MODEL_TYPE == "summarizer":
+    if is_hugging_face(settings.QA_MODEL):
         logger.debug(f"Sending request to {settings.QA_URL} with data {question_prompt}")
         yield json.dumps(dict(answer=get_answer_from_context(question_prompt)))
         return

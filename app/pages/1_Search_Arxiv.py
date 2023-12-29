@@ -9,9 +9,10 @@ st.set_page_config(page_title="Search", page_icon="🔍", layout="wide")
 st.title("Search Arxiv")
 
 query = st.text_input("Search for research articles")
+only_cached = st.checkbox("Only cached articles", value=True)
 
 if query:
-    data = api_client.search_articles(query=query)
+    data = api_client.search_articles(query=query, mock=only_cached)
 
     st.write(f"Found {data.total_items} results")
 
