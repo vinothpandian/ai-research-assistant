@@ -12,10 +12,15 @@ class Settings(BaseSettings):
     REDIS_DB: int = 0
     REDIS_PASSWORD: str = ""
 
+    SUMMARIZER_ENGINE: str = "base"
     SUMMARIZER_MODEL: str = "Falconsai/text_summarization"
+
+    EMBEDDING_ENGINE: str = "base"
     EMBEDDING_MODEL: str = "all-MiniLM-L6-v2"
-    QA_MODEL: str = "google/flan-t5-base"
     EMBEDDING_DIM: int = 384
+
+    QA_ENGINE: str = "base"
+    QA_MODEL: str = "google/flan-t5-base"
 
     CELERY_BROKER_URL: str = "redis://localhost:6379/1"
     CELERY_RESULT_BACKEND: str = "redis://localhost:6379/2"

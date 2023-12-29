@@ -34,6 +34,7 @@ watchdog = "^3.0.0"
 
 [tool.poetry.group.ai.dependencies]
 sentence-transformers = "^2.2.2"
+openai = "^1.6.1"
 
 
 [tool.poetry.group.core-api.dependencies]

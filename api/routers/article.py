@@ -4,10 +4,11 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pocketbase.utils import ClientResponseError
 from starlette.responses import StreamingResponse
 
-from core import ai
+from core.ai.factory import AIFactory
 from core.lib.db import ArticleDB
 from core.lib.vector_db import VectorDB
 from core.schema.article import ArticlesWithScoreList, CreateArticle
+from core.settings import settings
 from workers.tasks import delete_embeddings, generate_embeddings, generate_summary
 
 from ..dependencies import get_articles_db, get_vector_db
@@ -16,6 +17,10 @@ router = APIRouter(
     prefix="/articles",
     tags=["articles"],
 )
+
+ai_factory = AIFactory(settings)
+embedding_ai = ai_factory.create_engine("EMBEDDING_ENGINE")
+qa_ai = ai_factory.create_engine("QA_ENGINE")
 
 
 @router.get("/")
@@ -57,7 +62,7 @@ def search_articles(
     vector_db: VectorDB = Depends(get_vector_db),
 ):
     try:
-        vector = ai.get_embeddings(question)
+        vector = embedding_ai.get_embeddings(question)
         vector_db_articles = vector_db.semantic_search(vector)
 
         article_ids = [article.payload["id"] for article in vector_db_articles if article.score > score_threshold]
@@ -74,7 +79,7 @@ def search_articles(
         )
 
         return StreamingResponse(
-            ai.get_answer(question, articles_with_score, with_answer), media_type="application/json"
+            qa_ai.get_answer(question, articles_with_score, with_answer), media_type="application/json"
         )
     except ClientResponseError as e:
         raise HTTPException(status_code=e.status, detail=str(e.data))
