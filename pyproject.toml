@@ -18,6 +18,7 @@ pocketbase = "^0.9.2"
 qdrant-client = "^1.7.0"
 redis = "^5.0.1"
 httpx = ">=0.24.1,<0.25.0"
+pyyaml = "^6.0.1"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -34,7 +35,6 @@ watchdog = "^3.0.0"
 
 [tool.poetry.group.ai.dependencies]
 sentence-transformers = "^2.2.2"
-openai = "^1.6.1"
 
 
 [tool.poetry.group.core-api.dependencies]
@@ -47,6 +47,7 @@ uvicorn = "^0.25.0"
 [tool.poetry.group.workers.dependencies]
 celery = { extras = ["redis"], version = "^5.3.6" }
 flower = "^2.0.1"
+openai = "^1.6.1"
 
 [build-system]
 requires = ["poetry-core"]

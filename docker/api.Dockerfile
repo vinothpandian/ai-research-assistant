@@ -31,6 +31,7 @@ WORKDIR /app
 
 COPY api ./api
 COPY workers ./workers
+COPY config.yaml ./config.yaml
 
 CMD uvicorn api.main:app --proxy-headers --host 0.0.0.0 --port 80
 
