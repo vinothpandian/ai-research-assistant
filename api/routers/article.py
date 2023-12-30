@@ -31,7 +31,7 @@ async def get_articles(start: int = 0, limit: int = 10, db: ArticleDB = Depends(
         raise HTTPException(status_code=e.status, detail=str(e.data))
 
 
-@router.post("/")
+@router.post("/", status_code=201)
 def add_article(article: CreateArticle, db: ArticleDB = Depends(get_articles_db)):
     try:
         record = db.create_article(article)
@@ -42,13 +42,12 @@ def add_article(article: CreateArticle, db: ArticleDB = Depends(get_articles_db)
         raise HTTPException(status_code=e.status, detail=str(e.data))
 
 
-@router.delete("/{article_id}/")
+@router.delete("/{article_id}/", status_code=204)
 def remove_article(article_id: str, db: ArticleDB = Depends(get_articles_db)):
     try:
         vector_id = db.get_article(article_id).vector_id
         delete_embeddings.delay(vector_id)
         db.remove_article(article_id)
-        return dict(message="Article removed successfully")
     except ClientResponseError as e:
         raise HTTPException(status_code=e.status, detail=str(e.data))
 

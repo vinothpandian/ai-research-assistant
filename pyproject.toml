@@ -69,3 +69,5 @@ select = [
     "PL"
 ]
 
+[tool.pytest.ini_options]
+filterwarnings = ["ignore::DeprecationWarning"]
