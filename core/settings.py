@@ -1,8 +1,15 @@
+import os
 import pathlib
 import sys
 
 import yaml
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
+
+load_dotenv()
+
+
+CONFIG_FILE = os.getenv("CONFIG_FILE", "config.yaml")
 
 
 class RedisSettings(BaseSettings):
@@ -64,10 +71,10 @@ class Settings(BaseSettings):
     openai: OpenAISettings = OpenAISettings()
 
 
-if not pathlib.Path("config.yaml").exists():
+if not pathlib.Path(CONFIG_FILE).exists():
     sys.exit("config.yaml not found")
 
-with open("config.yaml") as f:
+with open(CONFIG_FILE) as f:
     config = yaml.safe_load(f)
 
 settings = Settings.model_validate(config)

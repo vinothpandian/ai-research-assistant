@@ -177,4 +177,4 @@ pyrightconfig.json
 
 .idea/
 
-config.yaml
+*config.yaml
