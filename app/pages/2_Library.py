@@ -49,14 +49,14 @@ for article in data.items:
         st.caption(", ".join(article.authors))
         st.write(article.link)
         if not article.vector_id:
-            st.text("Article not ready for semantic search yet")
+            st.write("Article not ready for semantic search yet")
 
         hide_ai_summary = st.toggle("Show abstract", key=f"show_ai_{article.id}")
         if hide_ai_summary:
-            st.text("Abstract:")
+            st.write("Abstract:")
             st.caption(article.abstract)
         elif article.ai_summary:
-            st.text("AI generated summary:")
+            st.write("AI generated summary:")
             st.caption(article.ai_summary)
         else:
             st.caption("AI summary is being generated...")

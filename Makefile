@@ -1,4 +1,6 @@
-run_all: run_ai_services start_api run_app
+run_all: run_backend run_app
+	
+run_backend: start_api run_ai_services
 
 start_api:
 	docker compose --profile api --profile db --profile worker up -d
@@ -42,8 +44,7 @@ stop_ollama:
 purge_ollama:
 	docker compose --profile ollama down --volumes
 
-
-run_ai_services: run_summarizer_service run_embedding_service run_question_answering_service
+run_ai_services: run_summarizer_service run_embedding_service run_question_answering_service run_ollama_service
 
 run_summarizer_service:
 	poetry run -- uvicorn ai.summarizer:app --workers 1 --port 9000
@@ -53,3 +54,6 @@ run_embedding_service:
 
 run_question_answering_service:
 	poetry run -- uvicorn ai.question_answering:app --workers 1 --port 9002
+
+run_ollama_service:
+	ollama serve

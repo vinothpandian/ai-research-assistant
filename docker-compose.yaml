@@ -61,7 +61,7 @@ services:
     build:
       context: .
       dockerfile: docker/api.Dockerfile
-    command: celery -A workers.app worker -l info
+    command: celery -A workers.tasks worker -l info
     depends_on:
       - pocketbase
       - qdrant
@@ -74,7 +74,7 @@ services:
     build:
       context: .
       dockerfile: docker/api.Dockerfile
-    command: celery -A workers.app flower -l info
+    command: celery -A workers.tasks flower -l info
     ports:
       - "5555:5555"
     depends_on:
