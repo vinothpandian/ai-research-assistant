@@ -8,6 +8,8 @@ services:
     build:
       context: .
       dockerfile: docker/pocketbase.Dockerfile
+    env_file:
+      - .env
     volumes:
       - pocketbase-data:/pb/pb_data
       - ./migrations:/pb/pb_migrations

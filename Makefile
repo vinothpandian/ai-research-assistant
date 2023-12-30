@@ -1,3 +1,14 @@
+run_all: run_ai_services start_api run_app
+
+start_api:
+	docker compose --profile api --profile db --profile worker up -d
+
+stop_api:
+	docker compose --profile api --profile db --profile worker down
+
+purge_api:
+	docker compose --profile api --profile db --profile worker down -v
+
 run_app:
 	poetry run -- python -m streamlit run app/Home.py
 
