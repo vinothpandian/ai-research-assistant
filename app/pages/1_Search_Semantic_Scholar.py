@@ -12,6 +12,8 @@ if "start" not in st.session_state:
     st.session_state.start = 0
 limit = 10
 
+page_num = (st.session_state.start // limit) + 1
+
 
 def go_to_next_page():
     st.session_state.start += limit
@@ -45,7 +47,7 @@ if query:
 
     columns = st.columns(6)
     with columns[0]:
-        st.button("Prev", on_click=go_to_previous_page, disabled=st.session_state.start != 0, use_container_width=True)
+        st.button("Prev", on_click=go_to_previous_page, disabled=page_num == 1, use_container_width=True)
     with columns[-1]:
         st.button(
             "Next",
@@ -53,6 +55,8 @@ if query:
             disabled=st.session_state.start + limit >= data.total_items,
             use_container_width=True,
         )
+
+    st.header(f"Page {page_num}")
 
     st.write(f"Found {data.total_items} results")
 

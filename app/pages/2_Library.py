@@ -8,6 +8,8 @@ if "start" not in st.session_state:
     st.session_state.start = 0
 limit = 10
 
+page_num = (st.session_state.start // limit) + 1
+
 st.header("Your library")
 data = api_client.get_articles(start=st.session_state.start, limit=limit)
 st.write(f"Total articles: {data.total_items}")
@@ -23,7 +25,7 @@ def go_to_previous_page():
 
 columns = st.columns(6)
 with columns[0]:
-    st.button("Prev", on_click=go_to_previous_page, disabled=st.session_state.start == 0, use_container_width=True)
+    st.button("Prev", on_click=go_to_previous_page, disabled=page_num == 1, use_container_width=True)
 with columns[-1]:
     st.button(
         "Next",

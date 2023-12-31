@@ -1,6 +1,29 @@
 version: "3.8"
 
 services:
+  kong:
+    image: kong:3.5.0
+    profiles:
+      - api
+    container_name: kong
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: "0.0.0.0:8001"
+      KONG_ADMIN_GUI_LISTEN: "0.0.0.0:8002"
+    volumes:
+      - ./gateway/kong.yml:/etc/kong/kong.yml
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+      - "8002:8002"
+    depends_on:
+      - api
+
   pocketbase:
     profiles:
       - db
@@ -25,8 +48,6 @@ services:
     volumes:
       - redis_data:/var/lib/redis/data/
       - ./config/redis.conf:/usr/local/etc/redis/redis.conf
-    command: >
-      /usr/local/etc/redis/redis.conf
     ports:
       - "6379:6379"
 
@@ -47,20 +68,22 @@ services:
     container_name: api
     build:
       context: .
-      dockerfile: docker/api.Dockerfile
+      dockerfile: docker/python.Dockerfile
+      target: api
     ports:
-      - "8000:80"
+      - "8000"
     depends_on:
       - pocketbase
       - qdrant
 
   worker:
     profiles:
-      - worker
+      - api
     container_name: worker
     build:
       context: .
-      dockerfile: docker/api.Dockerfile
+      dockerfile: docker/python.Dockerfile
+      target: api
     command: celery -A workers.tasks worker -l info
     depends_on:
       - pocketbase
@@ -69,11 +92,12 @@ services:
 
   flower:
     profiles:
-      - worker
+      - api
     container_name: flower
     build:
       context: .
-      dockerfile: docker/api.Dockerfile
+      dockerfile: docker/python.Dockerfile
+      target: api
     command: celery -A workers.tasks flower -l info
     ports:
       - "5555:5555"
@@ -81,58 +105,8 @@ services:
       - worker
       - redis
 
-  embedding-service:
-    profiles:
-      - ai
-    container_name: embedding-service
-    build:
-      context: .
-      dockerfile: docker/ai.Dockerfile
-      target: ai
-      args:
-        - APP_NAME=embedding
-    ports:
-      - "9000:80"
-
-  qa-service:
-    profiles:
-      - ai
-    container_name: qa-service
-    build:
-      context: .
-      dockerfile: docker/ai.Dockerfile
-      target: ai
-      args:
-        - APP_NAME=question_answering
-    ports:
-      - "9001:80"
-
-  ollama:
-    profiles:
-      - ollama
-    container_name: ollama
-    image: ollama/ollama:0.1.17
-    restart: always
-    volumes:
-      - ollama_data:/root/.ollama
-    ports:
-      - "11434:11434"
-
-  summarizer-service:
-    profiles:
-      - ai
-    container_name: summarizer-service
-    build:
-      context: .
-      dockerfile: docker/ai.Dockerfile
-      target: ai
-      args:
-        - APP_NAME=summarizer
-    ports:
-      - "9002:80"
-
 volumes:
   pocketbase-data:
   redis_data:
   qdrant_data:
-  ollama_data:
+  pgdata:

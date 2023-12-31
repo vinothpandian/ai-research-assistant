@@ -1,48 +1,21 @@
 run_all: run_backend run_app
 	
-run_backend: start_api run_ai_services
-
-start_api:
-	docker compose --profile api --profile db --profile worker up -d
-
-stop_api:
-	docker compose --profile api --profile db --profile worker down
-
-purge_api:
-	docker compose --profile api --profile db --profile worker down -v
+run_backend: run_api run_ai_services
 
 run_app:
-	poetry run -- python -m streamlit run app/Home.py
+	streamlit run app/Home.py
 
-start_db:
-	docker compose --profile db up -d
+run_api:
+	docker compose --profile app --profile api --profile db up -d
 
-stop_db:
-	docker compose --profile db down
+docker_api:
+	docker compose --profile api --profile db $(filter-out $@,$(MAKECMDGOALS))
 
-purge_db:
-	docker compose --profile db down --volumes
+docker_db:
+	docker compose --profile db $(filter-out $@,$(MAKECMDGOALS))
 
-start_worker:
-	docker compose --profile worker --profile db up -d
-
-stop_worker:
-	docker compose --profile worker --profile db down
-
-start_ai:
-	docker compose --profile ai up -d
-
-stop_ai:
-	docker compose --profile ai down
-
-start_ollama:
-	docker compose --profile ollama up -d
-
-stop_ollama:
-	docker compose --profile ollama down
-
-purge_ollama:
-	docker compose --profile ollama down --volumes
+docker_ai:
+	docker compose -f ai.docker-compose.yaml $(filter-out $@,$(MAKECMDGOALS))
 
 run_ai_services: run_summarizer_service run_embedding_service run_question_answering_service run_ollama_service
 
@@ -57,3 +30,6 @@ run_question_answering_service:
 
 run_ollama_service:
 	ollama serve
+
+%:
+	@:

@@ -13,7 +13,7 @@ RUN apt-get update \
 
 RUN pip install --no-cache-dir poetry==${POETRY_VERSION}
 
-WORKDIR /app
+WORKDIR /src
 
 COPY core ./core
 COPY pyproject.toml poetry.lock ./
@@ -23,18 +23,16 @@ RUN poetry install --only core --no-root
 
 FROM base as api
 
-ENV PATH="/app/.venv/bin:$PATH"
+ENV PATH="/src/.venv/bin:$PATH"
 
 RUN poetry install --only core-api,workers,api --no-root
 
-WORKDIR /app
+WORKDIR /src
 
 COPY api ./api
 COPY workers ./workers
 COPY config.yaml ./config.yaml
 
-CMD uvicorn api.main:app --proxy-headers --host 0.0.0.0 --port 80
-
-
+CMD uvicorn api.main:app --proxy-headers --host 0.0.0.0 --port 8000
 
 
