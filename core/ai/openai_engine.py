@@ -1,5 +1,3 @@
-import json
-
 from openai import OpenAI
 
 from core.ai.ollama_engine import OllamaEngine
@@ -48,14 +46,7 @@ class OpenAIEngine(OllamaEngine):
 
         return response["embedding"]
 
-    async def get_answer(self, question: str, articles: ArticlesWithScoreList, with_answer: bool = False):
-        response = dict(articles=articles.model_dump(mode="json"))
-
-        yield json.dumps(response)
-
-        if not with_answer:
-            return
-
+    async def get_answer(self, question: str, articles: ArticlesWithScoreList):
         abstracts = self.get_question_info(articles)
 
         messages = [
@@ -86,5 +77,8 @@ class OpenAIEngine(OllamaEngine):
         )
 
         for chunk in response:
-            value = chunk.choices[0].delta.content
-            yield json.dumps(dict(answer=value))
+            if chunk.choices[0].finish_reason is not None:
+                yield ""
+                break
+
+            yield chunk.choices[0].delta.content

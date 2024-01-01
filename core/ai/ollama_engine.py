@@ -38,14 +38,7 @@ class OllamaEngine(BaseAIEngine):
 
         return {"model": self.qa_model, "prompt": prompt, "stream": True}
 
-    async def get_answer(self, question: str, articles: ArticlesWithScoreList, with_answer: bool = False):
-        response = dict(articles=articles.model_dump(mode="json"))
-
-        yield json.dumps(response)
-
-        if not with_answer:
-            return
-
+    async def get_answer(self, question: str, articles: ArticlesWithScoreList):
         data = self.get_question_answer_request_data(question, articles)
 
         async with httpx.AsyncClient() as client:
@@ -54,4 +47,4 @@ class OllamaEngine(BaseAIEngine):
             async for chunk in r.aiter_text():
                 with contextlib.suppress(JSONDecodeError):
                     json_chunk = json.loads(chunk)
-                    yield json.dumps(dict(answer=json_chunk["response"]))
+                    yield json_chunk["response"]

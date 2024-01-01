@@ -1,4 +1,3 @@
-import json
 from typing import Dict
 
 import httpx
@@ -67,12 +66,5 @@ class BaseAIEngine:
         result = response.json()
         return result["response"]
 
-    async def get_answer(self, question: str, articles: ArticlesWithScoreList, with_answer: bool = False):
-        response = dict(articles=articles.model_dump(mode="json"))
-
-        yield json.dumps(response)
-
-        if not with_answer:
-            return
-
-        yield json.dumps(dict(answer=self.__get_answer_from_context(question, articles)))
+    async def get_answer(self, question: str, articles: ArticlesWithScoreList):
+        yield self.__get_answer_from_context(question, articles)

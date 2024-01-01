@@ -68,7 +68,7 @@ services:
       dockerfile: docker/python.Dockerfile
       target: api
     ports:
-      - "8090:8000"
+      - "8000"
     depends_on:
       - pocketbase
       - qdrant

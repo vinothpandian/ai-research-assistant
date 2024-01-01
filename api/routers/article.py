@@ -59,7 +59,6 @@ def remove_article(
 def search_articles(
     question: str,
     score_threshold: Annotated[float, Query(gt=0, lt=1)] = 0.1,
-    with_answer: bool = False,
     articles_db: ArticleDB = Depends(get_articles_db),
     vector_db: VectorDB = Depends(get_vector_db),
     ai_agent: AIAgent = Depends(get_ai_agent),
@@ -81,9 +80,36 @@ def search_articles(
             ]
         )
 
-        return StreamingResponse(
-            ai_agent.get_answer(question, articles_with_score, with_answer),
-            media_type="application/json",
+        return {"articles": articles_with_score}
+    except ClientResponseError as e:
+        raise HTTPException(status_code=e.status, detail=str(e.data))
+
+
+@router.get("/question_answering/")
+def question_answering(
+    question: str,
+    score_threshold: Annotated[float, Query(gt=0, lt=1)] = 0.1,
+    articles_db: ArticleDB = Depends(get_articles_db),
+    vector_db: VectorDB = Depends(get_vector_db),
+    ai_agent: AIAgent = Depends(get_ai_agent),
+):
+    try:
+        vector = ai_agent.get_embeddings(question)
+        vector_db_articles = vector_db.semantic_search(vector)
+
+        article_ids = [article.payload["id"] for article in vector_db_articles if article.score > score_threshold]
+
+        if not article_ids:
+            return HTTPException(status_code=404, detail="No relevant articles found for the given question")
+
+        articles = articles_db.get_articles_by_ids(article_ids)
+        articles_with_score = ArticlesWithScoreList(
+            [
+                dict(article.model_dump(mode="json"), score=vector_db_article.score)
+                for article, vector_db_article in zip(articles, vector_db_articles)
+            ]
         )
+
+        return StreamingResponse(ai_agent.get_answer(question, articles_with_score), media_type="application/json")
     except ClientResponseError as e:
         raise HTTPException(status_code=e.status, detail=str(e.data))

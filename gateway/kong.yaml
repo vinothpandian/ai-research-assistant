@@ -25,6 +25,18 @@ plugins:
     route: tasks
     service: ra
 
+  - config:
+      second: 1
+      policy: local
+      fault_tolerant: true
+    enabled: true
+    name: rate-limiting
+    protocols:
+      - http
+      - https
+    route: semantic_search
+    service: ra
+
 services:
   - connect_timeout: 60000
     enabled: true
@@ -55,7 +67,7 @@ services:
       - https_redirect_status_code: 426
         methods:
           - GET
-        name: semantic_search_and_qa
+        name: semantic_search
         path_handling: v0
         paths:
           - /articles/search/
@@ -65,6 +77,21 @@ services:
         regex_priority: 0
         request_buffering: true
         response_buffering: true
+        strip_path: false
+
+      - https_redirect_status_code: 426
+        methods:
+          - GET
+        name: question_answering
+        path_handling: v0
+        paths:
+          - /articles/question_answering/
+        preserve_host: true
+        protocols:
+          - http
+        regex_priority: 0
+        request_buffering: true
+        response_buffering: false
         strip_path: false
 
       - https_redirect_status_code: 426

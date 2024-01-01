@@ -50,28 +50,21 @@ def render_articles(articles: ArticlesWithScoreList):
 
 
 if st.session_state.question and search_option == "Semantic search":
-    result = api_client.semantic_search(st.session_state.question, score_threshold, with_answer=False)
-    data = next(iter(result), [])
-    render_articles(data)
+    result = api_client.semantic_search(st.session_state.question, score_threshold)
+    render_articles(result)
 
 placeholder = st.empty()
 if st.session_state.question and search_option == "Ask a question":
     search_results = []
     answer = ""
-    result = api_client.semantic_search(st.session_state.question, score_threshold, with_answer=True)
+    result = api_client.question_answering(st.session_state.question, score_threshold)
+    articles = api_client.semantic_search(st.session_state.question, score_threshold)
     container = placeholder.container(border=True)
     container.subheader("Answer")
     answer_placeholder = container.empty()
     answer_placeholder.write("Loading...")
+    render_articles(articles)
     for i, item in enumerate(result):
-        if i == 0:
-            search_results = item
-            render_articles(search_results)
-            continue
-
-        if not item:
-            continue
-
         answer += str(item)
         answer_placeholder.write(answer)
 

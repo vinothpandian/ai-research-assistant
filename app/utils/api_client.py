@@ -1,5 +1,3 @@
-import contextlib
-import json
 from typing import Generator
 
 import httpx
@@ -52,28 +50,27 @@ class ApiClient:
         response = httpx.post(f"{self.base_url}tasks/generate_embeddings/{article_id}/")
         response.raise_for_status()
 
-    def semantic_search(
-        self,
-        question: str,
-        score_threshold: float = 0.25,
-        with_answer: bool = False,
-    ) -> Generator[ArticlesWithScoreList | str, None, None]:
-        with httpx.stream(
-            "GET",
+    def semantic_search(self, question: str, score_threshold: float = 0.1) -> ArticlesWithScoreList:
+        response = httpx.get(
             f"{self.base_url}articles/search/",
             params=dict(
                 question=question,
                 score_threshold=score_threshold,
-                with_answer=with_answer,
+            ),
+        )
+        response.raise_for_status()
+        data = response.json().get("articles", [])
+        return ArticlesWithScoreList.model_validate(data)
+
+    def question_answering(self, question: str, score_threshold: float = 0.1) -> Generator[str, None, None]:
+        with httpx.stream(
+            "GET",
+            f"{self.base_url}articles/question_answering/",
+            params=dict(
+                question=question,
+                score_threshold=score_threshold,
             ),
             timeout=None,
         ) as response:
             for i, line in enumerate(response.iter_text()):
-                if i == 0:
-                    data = json.loads(line).get("articles", [])
-                    yield ArticlesWithScoreList.model_validate(data)
-                    continue
-
-                with contextlib.suppress(json.JSONDecodeError):
-                    part_answer = json.loads(line).get("answer", "")
-                    yield part_answer
+                yield line

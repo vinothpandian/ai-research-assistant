@@ -34,5 +34,5 @@ class AIAgent:
         text = f"Title: {content.title}\n\nAuthors: {authors}\n\nAbstract: {content.abstract}"
         return self.embedding.get_embeddings(text)
 
-    def get_answer(self, question: str, articles: ArticlesWithScoreList, with_answer: bool = False) -> str:
-        return self.qa.get_answer(question, articles, with_answer)
+    def get_answer(self, question: str, articles: ArticlesWithScoreList) -> str:
+        return self.qa.get_answer(question, articles)
