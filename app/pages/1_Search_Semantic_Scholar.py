@@ -1,6 +1,6 @@
 import streamlit as st
 
-from app.lib.app import api_client
+from app.utils.app import api_client
 from core.schema.article import CreateArticle
 from core.schema.semantic_scholar import SemanticScholarArticle
 

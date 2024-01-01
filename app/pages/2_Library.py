@@ -1,6 +1,6 @@
 import streamlit as st
 
-from app.lib.app import api_client
+from app.utils.app import api_client
 
 st.set_page_config(page_title="Research Assistant", page_icon="🥼")
 

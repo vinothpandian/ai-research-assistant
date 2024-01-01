@@ -5,8 +5,8 @@ from unittest.mock import MagicMock
 import pytest
 from fastapi.testclient import TestClient
 
-from core.lib.db import ArticleDB
-from core.lib.vector_db import VectorDB
+from core.utils.db import ArticleDB
+from core.utils.vector_db import VectorDB
 
 from ..dependencies import get_articles_db, get_vector_db
 from ..main import app

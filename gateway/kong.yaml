@@ -12,17 +12,7 @@ plugins:
       - https
     route: semantic_scholar
     service: ra
-  - config:
-      second: 1
-      policy: local
-      fault_tolerant: true
-    enabled: true
-    name: rate-limiting
-    protocols:
-      - http
-      - https
-    route: semantic_search_and_qa
-    service: ra
+
   - config:
       second: 1
       policy: local
@@ -34,6 +24,7 @@ plugins:
       - https
     route: tasks
     service: ra
+
 services:
   - connect_timeout: 60000
     enabled: true
@@ -60,6 +51,7 @@ services:
         request_buffering: true
         response_buffering: true
         strip_path: false
+
       - https_redirect_status_code: 426
         methods:
           - GET
@@ -74,6 +66,7 @@ services:
         request_buffering: true
         response_buffering: true
         strip_path: false
+
       - https_redirect_status_code: 426
         methods:
           - GET
@@ -88,6 +81,7 @@ services:
         request_buffering: true
         response_buffering: true
         strip_path: true
+
       - https_redirect_status_code: 426
         methods:
           - GET
@@ -102,6 +96,7 @@ services:
         request_buffering: true
         response_buffering: true
         strip_path: false
+
       - https_redirect_status_code: 426
         methods:
           - POST

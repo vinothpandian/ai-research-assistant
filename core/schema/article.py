@@ -2,7 +2,7 @@ from typing import Annotated, Iterable, List
 
 from pydantic import AfterValidator, BaseModel, RootModel
 
-from core.lib.text import clean_text
+from core.utils.text import clean_text
 
 
 class CreateArticle(BaseModel):

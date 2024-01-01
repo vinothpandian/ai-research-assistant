@@ -4,7 +4,7 @@ from pocketbase.utils import ClientResponseError
 from core.redis import RedisCache
 
 from ..dependencies import get_cache
-from ..lib.semantic_scholar import get_semantic_scholar_feed
+from ..utils.semantic_scholar import get_semantic_scholar_feed
 
 router = APIRouter(
     prefix="/semantic_scholar",

@@ -2,19 +2,22 @@ import contextlib
 
 import streamlit as st
 
-from app.lib.app import api_client
+from app.utils.app import api_client
 from core.schema.article import ArticlesWithScoreList
 
 st.set_page_config(page_title="Research Assistant", page_icon="🥼")
 
 st.header("Search through your library")
 
+if "question" not in st.session_state:
+    st.session_state.question = ""
+
 search_option = st.radio(
     "Search option",
     ["Semantic search", "Ask a question"],
     horizontal=True,
 )
-question = st.text_input(label=search_option)
+st.text_input(label=search_option, key="question")
 score_threshold = 0.1
 
 with st.expander("Advanced options"):
@@ -29,10 +32,10 @@ def render_articles(articles: ArticlesWithScoreList):
     if len(articles) > 0:
         st.markdown(f"**Found {len(articles)} results**")
 
-    if len(articles) == 0 and question:
+    if len(articles) == 0 and st.session_state.question:
         st.write("No results found")
 
-    if len(articles) == 0 and not question:
+    if len(articles) == 0 and not st.session_state.question:
         st.write("Your library is empty")
 
     for article in articles:
@@ -46,16 +49,16 @@ def render_articles(articles: ArticlesWithScoreList):
             st.divider()
 
 
-if question and search_option == "Semantic search":
-    result = api_client.semantic_search(question, score_threshold, with_answer=False)
+if st.session_state.question and search_option == "Semantic search":
+    result = api_client.semantic_search(st.session_state.question, score_threshold, with_answer=False)
     data = next(iter(result), [])
     render_articles(data)
 
 placeholder = st.empty()
-if question and search_option == "Ask a question":
+if st.session_state.question and search_option == "Ask a question":
     search_results = []
     answer = ""
-    result = api_client.semantic_search(question, score_threshold, with_answer=True)
+    result = api_client.semantic_search(st.session_state.question, score_threshold, with_answer=True)
     container = placeholder.container(border=True)
     container.subheader("Answer")
     answer_placeholder = container.empty()

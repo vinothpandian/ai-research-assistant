@@ -5,9 +5,9 @@ from pocketbase.utils import ClientResponseError
 from starlette.responses import StreamingResponse
 
 from core.ai.agent import AIAgent
-from core.lib.db import ArticleDB
-from core.lib.vector_db import VectorDB
 from core.schema.article import ArticlesWithScoreList, CreateArticle
+from core.utils.db import ArticleDB
+from core.utils.vector_db import VectorDB
 
 from ..dependencies import get_ai_agent, get_articles_db, get_vector_db
 from ..tasks import generate_embeddings_task, generate_summary_task

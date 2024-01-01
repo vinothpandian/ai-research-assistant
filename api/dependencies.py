@@ -3,10 +3,10 @@ import contextlib
 import pocketbase
 
 from core.ai.agent import AIAgent
-from core.lib.db import ArticleDB
-from core.lib.vector_db import VectorDB
 from core.redis import RedisCache
 from core.settings import settings
+from core.utils.db import ArticleDB
+from core.utils.vector_db import VectorDB
 
 
 def get_cache() -> RedisCache:

@@ -1,10 +1,10 @@
 from loguru import logger
 
 from core.ai.agent import AIAgent
-from core.lib.db import ArticleDB
-from core.lib.vector_db import VectorDB
 from core.schema.article import Article
 from core.settings import settings
+from core.utils.db import ArticleDB
+from core.utils.vector_db import VectorDB
 
 
 def generate_summary_task(article: Article):

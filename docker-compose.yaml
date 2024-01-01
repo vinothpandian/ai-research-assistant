@@ -1,14 +1,13 @@
 version: "3.8"
 
 services:
+
   kong:
     image: kong:3.5.0
-    profiles:
-      - api
     container_name: kong
     environment:
       KONG_DATABASE: "off"
-      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml
+      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yaml
       KONG_PROXY_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
       KONG_PROXY_ERROR_LOG: /dev/stderr
@@ -16,13 +15,11 @@ services:
       KONG_ADMIN_LISTEN: "0.0.0.0:8001"
       KONG_ADMIN_GUI_LISTEN: "0.0.0.0:8002"
     volumes:
-      - ./gateway/kong.yml:/etc/kong/kong.yml
+      - ./gateway/kong.yaml:/etc/kong/kong.yaml
     ports:
       - "8000:8000"
       - "8001:8001"
       - "8002:8002"
-    depends_on:
-      - api
 
   pocketbase:
     profiles:
@@ -37,7 +34,7 @@ services:
       - pocketbase-data:/pb/pb_data
       - ./migrations:/pb/pb_migrations
     ports:
-      - "8080:8080"
+      - "8080"
 
   redis:
     profiles:
@@ -49,7 +46,7 @@ services:
       - redis_data:/var/lib/redis/data/
       - ./config/redis.conf:/usr/local/etc/redis/redis.conf
     ports:
-      - "6379:6379"
+      - "6379"
 
   qdrant:
     profiles:
@@ -60,7 +57,7 @@ services:
     volumes:
       - qdrant_data:/qdrant/storage
     ports:
-      - "6333:6333"
+      - "6333"
 
   api:
     profiles:
@@ -71,7 +68,7 @@ services:
       dockerfile: docker/python.Dockerfile
       target: api
     ports:
-      - "8000"
+      - "8090:8000"
     depends_on:
       - pocketbase
       - qdrant
