@@ -1,5 +1,8 @@
+import contextlib
+
 import pocketbase
 
+from core.ai.agent import AIAgent
 from core.lib.db import ArticleDB
 from core.lib.vector_db import VectorDB
 from core.redis import RedisCache
@@ -32,3 +35,10 @@ def get_vector_db():
         yield vector_db
     finally:
         vector_db.disconnect()
+
+
+def get_ai_agent():
+    ai_agent = AIAgent(settings=settings)
+
+    with contextlib.suppress(Exception):
+        yield ai_agent

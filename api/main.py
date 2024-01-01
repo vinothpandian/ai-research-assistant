@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from .routers import article, semantic_scholar
+from .routers import article, semantic_scholar, tasks
 
 app = FastAPI(
     title="AI Research Assistant",
@@ -20,3 +20,4 @@ app = FastAPI(
 
 app.include_router(semantic_scholar.router)
 app.include_router(article.router)
+app.include_router(tasks.router)

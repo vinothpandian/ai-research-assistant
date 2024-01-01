@@ -25,12 +25,11 @@ FROM base as api
 
 ENV PATH="/src/.venv/bin:$PATH"
 
-RUN poetry install --only core-api,workers,api --no-root
+RUN poetry install --only core-api,api --no-root
 
 WORKDIR /src
 
 COPY api ./api
-COPY workers ./workers
 COPY config.yaml ./config.yaml
 
 CMD uvicorn api.main:app --proxy-headers --host 0.0.0.0 --port 8000

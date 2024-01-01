@@ -1,7 +1,8 @@
 from typing import Annotated
 
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 from pydantic import BaseModel, Field
+from ray import serve
 from transformers import pipeline
 
 from core.settings import settings
@@ -23,23 +24,30 @@ app = FastAPI(
 )
 
 
-def get_model():
-    model = pipeline("summarization", model=settings.summarizer.model)
-    try:
-        yield model
-    finally:
-        del model
-
-
-class Prompt(BaseModel):
+class RequestData(BaseModel):
     prompt: str
     min_length: Annotated[int | None, Field(gt=0)] = 100
     max_length: Annotated[int | None, Field(gt=0)] = 200
 
 
-@app.post("/summarize/")
-async def summarize(data: Prompt, model=Depends(get_model)):
-    summaries = model(data.prompt, max_length=data.max_length, min_length=data.min_length, do_sample=False)
-    return {
-        "response": summaries[0]["summary_text"],
-    }
+@serve.deployment(num_replicas=2, ray_actor_options={"num_cpus": 0.2, "num_gpus": 0})
+@serve.ingress(app)
+class Summarizer:
+    def __init__(self):
+        if settings.summarizer.type != "base":
+            self.model = None
+            return
+
+        self.model = pipeline("summarization", model=settings.summarizer.model)
+
+    @app.post("/")
+    def summarize(self, data: RequestData):
+        if self.model is None:
+            return {"response": "Summarizer is not available"}
+
+        model_output = self.model(data.prompt)
+        response = model_output[0]["summary_text"]
+        return {"response": response}
+
+
+summarizer_app = Summarizer.bind()

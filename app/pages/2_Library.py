@@ -63,7 +63,23 @@ for article in data.items:
         else:
             st.caption("AI summary is being generated...")
 
-        columns = st.columns(4)
+        columns = st.columns(3)
+        columns[0].button(
+            "Regenerate summary",
+            key=f"summary_{article.id}",
+            use_container_width=True,
+            on_click=api_client.regenerate_summary,
+            args=(article.id,),
+        )
+
+        columns[1].button(
+            "Regenerate search index",
+            key=f"embeddings_{article.id}",
+            use_container_width=True,
+            on_click=api_client.regenerate_embeddings,
+            args=(article.id,),
+        )
+
         columns[-1].button(
             "Remove from library",
             key=f"save_{article.id}",

@@ -25,8 +25,8 @@ def test_check_articles(api_client, articles_db):
     }
 
 
-@patch("api.routers.article.generate_embeddings")
-@patch("api.routers.article.generate_summary")
+@patch("api.routers.article.generate_embeddings_task")
+@patch("api.routers.article.generate_summary_task")
 def test_create_article_validation(mock_generate_embeddings, mock_generate_summary, api_client, articles_db):
     response = api_client.post(
         "/articles/",
@@ -41,8 +41,8 @@ def test_create_article_validation(mock_generate_embeddings, mock_generate_summa
     assert articles_db.create_article.call_count == 0
 
 
-@patch("api.routers.article.generate_embeddings")
-@patch("api.routers.article.generate_summary")
+@patch("api.routers.article.generate_embeddings_task")
+@patch("api.routers.article.generate_summary_task")
 def test_create_article(mock_generate_embeddings, mock_generate_summary, api_client, articles_db):
     response = api_client.post(
         "/articles/",
@@ -57,15 +57,14 @@ def test_create_article(mock_generate_embeddings, mock_generate_summary, api_cli
     )
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert mock_generate_summary.delay.call_count == 1
-    assert mock_generate_embeddings.delay.call_count == 1
+    assert mock_generate_summary.call_count == 1
+    assert mock_generate_embeddings.call_count == 1
     assert articles_db.create_article.call_count == 1
 
 
-@patch("api.routers.article.delete_embeddings")
-def test_delete_article(mock_delete_embeddings, api_client, articles_db):
+def test_delete_article(api_client, articles_db, vector_db):
     response = api_client.delete("/articles/1234/")
     assert response.status_code == status.HTTP_204_NO_CONTENT
     assert articles_db.get_article.call_count == 1
-    assert mock_delete_embeddings.delay.call_count == 1
+    assert vector_db.remove_article.call_count == 1
     assert articles_db.remove_article.call_count == 1

@@ -56,8 +56,6 @@ if query:
             use_container_width=True,
         )
 
-    st.header(f"Page {page_num}")
-
     st.write(f"Found {data.total_items} results")
 
     for i, article in enumerate(data.items):

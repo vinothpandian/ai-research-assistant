@@ -1,5 +1,6 @@
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 from pydantic import BaseModel
+from ray import serve
 from sentence_transformers import SentenceTransformer
 
 from core.settings import settings
@@ -21,24 +22,29 @@ app = FastAPI(
 )
 
 
-def get_encoder() -> SentenceTransformer:
-    encoder = SentenceTransformer(settings.embedding.model)
-
-    try:
-        if encoder.get_sentence_embedding_dimension() != settings.embedding.dim:
-            raise ValueError(f"Embedding encoder should have {settings.embedding.dim} dimensions")
-
-        yield encoder
-    finally:
-        del encoder
-
-
-class Prompt(BaseModel):
+class RequestData(BaseModel):
     prompt: str
 
 
-@app.post("/embedding/")
-async def get_embedding(data: Prompt, encoder: SentenceTransformer = Depends(get_encoder)):
-    return {
-        "embedding": encoder.encode(data.prompt).tolist(),
-    }
+@serve.deployment(num_replicas=2, ray_actor_options={"num_cpus": 0.2, "num_gpus": 0})
+@serve.ingress(app)
+class EmbeddingGenerator:
+    def __init__(self):
+        if settings.embedding.type != "base":
+            self.model = None
+            return
+
+        self.model = SentenceTransformer(settings.embedding.model)
+        if self.model.get_sentence_embedding_dimension() != settings.embedding.dim:
+            raise ValueError("Embedding dimension mismatch")
+
+    @app.post("/")
+    def generate_embedding(self, data: RequestData):
+        if self.model is None:
+            return {"response": "Embedding is not available"}
+
+        model_output = self.model.encode(data.prompt).tolist()
+        return {"embedding": model_output}
+
+
+embedding_app = EmbeddingGenerator.bind()

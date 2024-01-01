@@ -76,35 +76,6 @@ services:
       - pocketbase
       - qdrant
 
-  worker:
-    profiles:
-      - api
-    container_name: worker
-    build:
-      context: .
-      dockerfile: docker/python.Dockerfile
-      target: api
-    command: celery -A workers.tasks worker -l info
-    depends_on:
-      - pocketbase
-      - qdrant
-      - redis
-
-  flower:
-    profiles:
-      - api
-    container_name: flower
-    build:
-      context: .
-      dockerfile: docker/python.Dockerfile
-      target: api
-    command: celery -A workers.tasks flower -l info
-    ports:
-      - "5555:5555"
-    depends_on:
-      - worker
-      - redis
-
 volumes:
   pocketbase-data:
   redis_data:
