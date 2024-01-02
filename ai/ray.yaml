@@ -1,0 +1,51 @@
+proxy_location: EveryNode
+
+http_options:
+  host: 0.0.0.0
+  port: 9000
+
+logging_config:
+  encoding: TEXT
+  log_level: INFO
+  logs_dir: null
+  enable_access_log: true
+
+applications:
+
+  - name: embedding-generator
+    route_prefix: /embedding
+    import_path: ai.embedding:embedding_app
+    runtime_env: { }
+
+    deployments:
+      - name: EmbeddingGenerator
+        max_concurrent_queries: 6
+        autoscaling_config:
+          target_num_ongoing_requests_per_replica: 2
+          min_replicas: 0
+          max_replicas: 4
+
+  - name: question-answering
+    route_prefix: /answer
+    import_path: ai.question_answering:qa_app
+    runtime_env: { }
+
+    deployments:
+      - name: QuestionAnswering
+        num_replicas: 1
+        ray_actor_options:
+          num_cpus: 0.2
+          num_gpus: 0.0
+
+
+  - name: summarizer
+    route_prefix: /summarize
+    import_path: ai.summarizer:summarizer_app
+    runtime_env: { }
+
+    deployments:
+      - name: Summarizer
+        num_replicas: 1
+        ray_actor_options:
+          num_cpus: 0.2
+          num_gpus: 0.0
