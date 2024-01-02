@@ -11,11 +11,13 @@ logging_config:
   enable_access_log: true
 
 applications:
-
   - name: embedding-generator
     route_prefix: /embedding
     import_path: ai.embedding:embedding_app
-    runtime_env: { }
+    runtime_env:
+      pip:
+        - sentence-transformers==2.2.2
+        - ray[serve]==2.9.0
 
     deployments:
       - name: EmbeddingGenerator
@@ -28,7 +30,10 @@ applications:
   - name: question-answering
     route_prefix: /answer
     import_path: ai.question_answering:qa_app
-    runtime_env: { }
+    runtime_env:
+      pip:
+        - sentence-transformers==2.2.2
+        - ray[serve]==2.9.0
 
     deployments:
       - name: QuestionAnswering
@@ -37,11 +42,13 @@ applications:
           num_cpus: 0.2
           num_gpus: 0.0
 
-
   - name: summarizer
     route_prefix: /summarize
     import_path: ai.summarizer:summarizer_app
-    runtime_env: { }
+    runtime_env:
+      pip:
+        - sentence-transformers==2.2.2
+        - ray[serve]==2.9.0
 
     deployments:
       - name: Summarizer
