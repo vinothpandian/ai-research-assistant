@@ -5,11 +5,11 @@ from typing import Dict
 
 import httpx
 
-from core.ai.base_engine import BaseAIEngine
+from core.ai.base_engine import HuggingfaceAIEngine
 from core.schema.article import Article, ArticlesWithScoreList
 
 
-class OllamaEngine(BaseAIEngine):
+class OllamaEngine(HuggingfaceAIEngine):
     def get_summarization_request_data(self, article: Article) -> Dict[str, str]:
         prompt = f""""
         {article.abstract}

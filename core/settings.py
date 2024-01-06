@@ -1,6 +1,7 @@
 import os
 import pathlib
 import sys
+from typing import Literal
 
 import yaml
 from dotenv import load_dotenv
@@ -10,6 +11,8 @@ load_dotenv()
 
 
 CONFIG_FILE = os.getenv("CONFIG_FILE", "config.yaml")
+
+AIEngineType = Literal["huggingface", "ollama", "openai"]
 
 
 class RedisSettings(BaseSettings):
@@ -37,13 +40,13 @@ class AIEngineSettings(BaseSettings):
 
 
 class SummarizerSettings(AIEngineSettings):
-    type: str = "base"
+    type: AIEngineType = "huggingface"
     model: str = "Falconsai/text_summarization"
     url: str = "http://localhost:9000/summarize/"
 
 
 class EmbeddingSettings(AIEngineSettings):
-    type: str = "base"
+    type: AIEngineType = "huggingface"
     model: str = "all-MiniLM-L6-v2"
     url: str = "http://localhost:9001/embedding/"
     dim: int = 384
@@ -51,7 +54,7 @@ class EmbeddingSettings(AIEngineSettings):
 
 
 class QASettings(AIEngineSettings):
-    type: str = "base"
+    type: AIEngineType = "huggingface"
     model: str = "google/flan-t5-base"
     url: str = "http://localhost:9002/answer/"
 

@@ -28,8 +28,6 @@ services:
     build:
       context: .
       dockerfile: docker/pocketbase.Dockerfile
-    env_file:
-      - .env
     volumes:
       - pocketbase-data:/pb/pb_data
       - ./migrations:/pb/pb_migrations
@@ -69,6 +67,8 @@ services:
       target: api
     ports:
       - "8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - pocketbase
       - qdrant

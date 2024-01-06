@@ -30,7 +30,7 @@ class RequestData(BaseModel):
 @serve.ingress(app)
 class EmbeddingGenerator:
     def __init__(self):
-        if settings.embedding.type != "base":
+        if settings.embedding.type != "huggingface":
             self.model = None
             return
 

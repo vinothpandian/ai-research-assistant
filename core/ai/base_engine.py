@@ -6,7 +6,7 @@ from core.schema.article import Article, ArticlesWithScoreList
 from core.settings import Settings
 
 
-class BaseAIEngine:
+class HuggingfaceAIEngine:
     def __init__(self, settings: Settings):
         self.summarizer_url = settings.summarizer.url
         self.summarizer_model = settings.summarizer.model

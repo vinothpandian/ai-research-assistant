@@ -34,7 +34,7 @@ class RequestData(BaseModel):
 @serve.ingress(app)
 class Summarizer:
     def __init__(self):
-        if settings.summarizer.type != "base":
+        if settings.summarizer.type != "huggingface":
             self.model = None
             return
 

@@ -1,4 +1,4 @@
-from core.ai.base_engine import BaseAIEngine
+from core.ai.base_engine import HuggingfaceAIEngine
 from core.ai.ollama_engine import OllamaEngine
 from core.ai.openai_engine import OpenAIEngine
 from core.schema.article import Article, ArticlesWithScoreList
@@ -12,12 +12,12 @@ class AIAgent:
         self.embedding = self.__create_engine(settings.embedding.type)
         self.qa = self.__create_engine(settings.qa.type)
 
-    def __create_engine(self, engine_name: str) -> BaseAIEngine:
+    def __create_engine(self, engine_name: str) -> HuggingfaceAIEngine:
         match engine_name:
             case "ollama":
                 return OllamaEngine(self.settings)
-            case "base":
-                return BaseAIEngine(self.settings)
+            case "huggingface":
+                return HuggingfaceAIEngine(self.settings)
             case "openai":
                 return OpenAIEngine(self.settings)
             case _:

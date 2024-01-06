@@ -30,7 +30,7 @@ class RequestData(BaseModel):
 @serve.ingress(app)
 class QuestionAnswering:
     def __init__(self):
-        if settings.qa.type != "base":
+        if settings.qa.type != "huggingface":
             self.model = None
             return
 

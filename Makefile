@@ -20,7 +20,7 @@ docker_ai:
 run_ai_services: run_ray run_ollama_service
 
 run_ray:
-	serve run ai/ray-config.yaml
+	serve run ai/ray.yaml
 
 run_ollama_service:
 	ollama serve
