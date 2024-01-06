@@ -14,9 +14,6 @@ docker_api:
 docker_db:
 	docker compose --profile db $(filter-out $@,$(MAKECMDGOALS))
 
-docker_ai:
-	docker compose -f ai.docker-compose.yaml $(filter-out $@,$(MAKECMDGOALS))
-
 run_ai_services: run_ray run_ollama_service
 
 run_ray:
