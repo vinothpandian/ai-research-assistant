@@ -46,4 +46,4 @@ class QuestionAnswering:
         return {"response": response}
 
 
-qa_app = QuestionAnswering.bind()
+qa_app = QuestionAnswering.bind()  # type: ignore

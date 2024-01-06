@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pocketbase.utils import ClientResponseError
 from starlette.responses import StreamingResponse
 
@@ -8,9 +8,9 @@ from core.ai.agent import AIAgent
 from core.schema.article import ArticlesWithScoreList, CreateArticle
 from core.utils.db import ArticleDB
 from core.utils.vector_db import VectorDB
+from workers.app import generate_embeddings_task, generate_summary_task
 
 from ..dependencies import get_ai_agent, get_articles_db, get_vector_db
-from ..tasks import generate_embeddings_task, generate_summary_task
 
 router = APIRouter(
     prefix="/articles",
@@ -29,13 +29,12 @@ async def get_articles(start: int = 0, limit: int = 10, articles_db: ArticleDB =
 @router.post("/", status_code=201)
 def add_article(
     article: CreateArticle,
-    background_tasks: BackgroundTasks,
     articles_db: ArticleDB = Depends(get_articles_db),
 ):
     try:
         created_article = articles_db.create_article(article)
-        background_tasks.add_task(generate_summary_task, article=created_article)
-        background_tasks.add_task(generate_embeddings_task, article=created_article)
+        generate_summary_task.send(article_id=created_article.id)
+        generate_embeddings_task.send(article_id=created_article.id)
         return created_article
     except ClientResponseError as e:
         raise HTTPException(status_code=e.status, detail=str(e.data))
@@ -73,6 +72,7 @@ def search_articles(
             return HTTPException(status_code=404, detail="No relevant articles found for the given question")
 
         articles = articles_db.get_articles_by_ids(article_ids)
+
         articles_with_score = ArticlesWithScoreList(
             [
                 dict(article.model_dump(mode="json"), score=vector_db_article.score)

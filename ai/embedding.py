@@ -47,4 +47,4 @@ class EmbeddingGenerator:
         return {"embedding": model_output}
 
 
-embedding_app = EmbeddingGenerator.bind()
+embedding_app = EmbeddingGenerator.bind()  # type: ignore

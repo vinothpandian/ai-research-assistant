@@ -1,7 +1,8 @@
 import contextlib
+from typing import List
 from uuid import uuid4
 
-from qdrant_client import QdrantClient, models
+from qdrant_client import QdrantClient, ScoredPoint, models
 
 from core.schema.article import Article
 from core.settings import Settings
@@ -29,7 +30,7 @@ class VectorDB:
                 ),
             )
 
-    def save_article(self, article: Article, vector):
+    def save_article(self, article: Article, vector) -> str:
         vector_id = str(uuid4())  # generate a random id
         self.client.upload_records(
             collection_name=self.collection_name,
@@ -43,10 +44,10 @@ class VectorDB:
         )
         return vector_id
 
-    def remove_article(self, vector_id: str):
+    def remove_article(self, vector_id: str) -> None:
         self.client.delete(collection_name=self.collection_name, points_selector=[vector_id])
 
-    def semantic_search(self, vector):
+    def semantic_search(self, vector: List[float]) -> List[ScoredPoint]:
         return self.client.search(collection_name=self.collection_name, query_vector=vector, limit=3)
 
     def disconnect(self):

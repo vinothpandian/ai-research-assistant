@@ -1,7 +1,6 @@
 version: "3.8"
 
 services:
-
   kong:
     image: kong:3.5.0
     container_name: kong
@@ -56,6 +55,21 @@ services:
       - qdrant_data:/qdrant/storage
     ports:
       - "6333"
+
+  workers:
+    profiles:
+      - api
+    container_name: workers
+    build:
+      context: .
+      dockerfile: docker/python.Dockerfile
+      target: api
+    command: ["dramatiq", "workers.app"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - pocketbase
+      - qdrant
 
   api:
     profiles:

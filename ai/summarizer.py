@@ -50,4 +50,4 @@ class Summarizer:
         return {"response": response}
 
 
-summarizer_app = Summarizer.bind()
+summarizer_app = Summarizer.bind()  # type: ignore

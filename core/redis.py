@@ -11,7 +11,7 @@ CacheKeys = List[str | int]
 
 
 class RedisCache:
-    client = None
+    client: redis.Redis | None = None
 
     def __init__(self, settings: Settings) -> None:
         self.client = redis.Redis(
@@ -32,6 +32,9 @@ class RedisCache:
         return hashlib.md5("".join(map(str, keys)).encode()).hexdigest()
 
     def get(self, keys: CacheKeys) -> np.ndarray | None:
+        if self.client is None:
+            return None
+
         key = self._generate_key(keys)
 
         if data := self.client.get(key):
@@ -41,16 +44,28 @@ class RedisCache:
         return None
 
     def set(self, keys: CacheKeys, value: Any, ex: int = 60 * 5) -> None:
+        if self.client is None:
+            return None
+
         key = self._generate_key(keys)
         data = json.dumps(value)
         self.client.set(key, data, ex=ex)
 
     def delete(self, keys: CacheKeys) -> None:
+        if self.client is None:
+            return None
+
         key = self._generate_key(keys)
         self.client.delete(key)
 
     def ping(self) -> bool:
+        if self.client is None:
+            return False
+
         return self.client.ping()
 
     def disconnect(self) -> None:
+        if self.client is None:
+            return None
+
         self.client.close()

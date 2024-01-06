@@ -1,4 +1,4 @@
-from typing import Annotated, Iterable, List
+from typing import Annotated, Iterator, List
 
 from pydantic import AfterValidator, BaseModel, RootModel
 
@@ -27,7 +27,7 @@ class ArticleWithScore(Article):
 class ArticlesList(RootModel):
     root: List[Article]
 
-    def __iter__(self) -> Iterable[Article]:
+    def __iter__(self) -> Iterator[Article]:
         return iter(self.root)
 
     def __getitem__(self, item) -> Article:
@@ -43,7 +43,7 @@ class ArticlesList(RootModel):
 class ArticlesWithScoreList(RootModel):
     root: List[ArticleWithScore]
 
-    def __iter__(self) -> Iterable[Article]:
+    def __iter__(self) -> Iterator[ArticleWithScore]:
         return iter(self.root)
 
     def __len__(self) -> int:

@@ -1,6 +1,5 @@
 import contextlib
-
-import pocketbase
+from typing import Generator
 
 from core.ai.agent import AIAgent
 from core.redis import RedisCache
@@ -9,7 +8,7 @@ from core.utils.db import ArticleDB
 from core.utils.vector_db import VectorDB
 
 
-def get_cache() -> RedisCache:
+def get_cache() -> Generator[RedisCache, None, None]:
     cache = RedisCache(settings=settings)
 
     try:
@@ -19,7 +18,7 @@ def get_cache() -> RedisCache:
         cache.disconnect()
 
 
-def get_articles_db() -> pocketbase.PocketBase:
+def get_articles_db() -> Generator[ArticleDB, None, None]:
     article_db = ArticleDB(settings=settings)
 
     try:
@@ -28,7 +27,7 @@ def get_articles_db() -> pocketbase.PocketBase:
         article_db.disconnect()
 
 
-def get_vector_db():
+def get_vector_db() -> Generator[VectorDB, None, None]:
     vector_db = VectorDB(settings=settings)
 
     try:

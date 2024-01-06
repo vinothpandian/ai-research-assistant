@@ -25,5 +25,8 @@ run_ray:
 run_ollama_service:
 	ollama serve
 
+ruff:
+	ruff check --fix .
+
 %:
 	@:

@@ -26,6 +26,9 @@ ruff = "^0.1.9"
 pre-commit = "^3.6.0"
 jupyter = "^1.0.0"
 datasets = "^2.16.0"
+mypy = "^1.8.0"
+types-pyyaml = "^6.0.12.12"
+types-redis = "^4.6.0.20240106"
 
 
 [tool.poetry.group.app.dependencies]
@@ -45,6 +48,10 @@ uvicorn = "^0.25.0"
 
 [tool.poetry.group.api.dependencies]
 openai = "^1.6.1"
+
+
+[tool.poetry.group.workers.dependencies]
+dramatiq = {extras = ["watch"], version = "^1.15.0"}
 
 [build-system]
 requires = ["poetry-core"]

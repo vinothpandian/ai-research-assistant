@@ -1,7 +1,6 @@
 import contextlib
 import json
 from json import JSONDecodeError
-from typing import Dict
 
 import httpx
 
@@ -10,7 +9,7 @@ from core.schema.article import Article, ArticlesWithScoreList
 
 
 class OllamaEngine(HuggingfaceAIEngine):
-    def get_summarization_request_data(self, article: Article) -> Dict[str, str]:
+    def get_summarization_request_data(self, article: Article) -> dict:
         prompt = f""""
         {article.abstract}
         ###
@@ -24,11 +23,11 @@ class OllamaEngine(HuggingfaceAIEngine):
 
         return {"model": self.summarizer_model, "prompt": prompt, "stream": False}
 
-    def get_embeddings_request_data(self, text: str) -> Dict[str, str]:
+    def get_embeddings_request_data(self, text: str) -> dict:
         request_data = super().get_embeddings_request_data(text)
         return {"model": self.embedding_model, "prompt": request_data["prompt"], "stream": False}
 
-    def get_question_answer_request_data(self, question: str, articles: ArticlesWithScoreList) -> Dict[str, str]:
+    def get_question_answer_request_data(self, question: str, articles: ArticlesWithScoreList) -> dict:
         request_data = super().get_question_answer_request_data(question, articles)
 
         prompt = f"""Answer the question based on the context given below. The answer should only contain information that is present in the context. The answer should not contain any information that is not present in the context.

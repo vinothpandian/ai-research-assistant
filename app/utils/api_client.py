@@ -38,7 +38,7 @@ class ApiClient:
         response = httpx.post(f"{self.base_url}articles/", json=article.model_dump(mode="json"))
         response.raise_for_status()
 
-    def delete_article(self, article_id: int) -> None:
+    def delete_article(self, article_id: str) -> None:
         response = httpx.delete(f"{self.base_url}articles/{article_id}/")
         response.raise_for_status()
 
@@ -72,5 +72,5 @@ class ApiClient:
             ),
             timeout=None,
         ) as response:
-            for i, line in enumerate(response.iter_text()):
+            for line in response.iter_text():
                 yield line
