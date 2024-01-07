@@ -21,11 +21,14 @@ applications:
 
     deployments:
       - name: EmbeddingGenerator
-        max_concurrent_queries: 6
+        max_concurrent_queries: 8
         autoscaling_config:
           target_num_ongoing_requests_per_replica: 2
-          min_replicas: 0
-          max_replicas: 4
+          min_replicas: 4
+          max_replicas: 8
+        ray_actor_options:
+          num_cpus: 1.0
+          num_gpus: 0.0
 
   - name: question-answering
     route_prefix: /answer
@@ -37,9 +40,12 @@ applications:
 
     deployments:
       - name: QuestionAnswering
-        num_replicas: 1
+        autoscaling_config:
+          target_num_ongoing_requests_per_replica: 1
+          min_replicas: 0
+          max_replicas: 1
         ray_actor_options:
-          num_cpus: 0.2
+          num_cpus: 1.0
           num_gpus: 0.0
 
   - name: summarizer
@@ -52,7 +58,10 @@ applications:
 
     deployments:
       - name: Summarizer
-        num_replicas: 1
+        autoscaling_config:
+          target_num_ongoing_requests_per_replica: 1
+          min_replicas: 0
+          max_replicas: 1
         ray_actor_options:
-          num_cpus: 0.2
+          num_cpus: 1.0
           num_gpus: 0.0
