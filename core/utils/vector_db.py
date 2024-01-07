@@ -2,7 +2,8 @@ import contextlib
 from typing import List
 from uuid import uuid4
 
-from qdrant_client import QdrantClient, ScoredPoint, models
+from qdrant_client import QdrantClient, models
+from qdrant_client.models import ScoredPoint
 
 from core.schema.article import Article
 from core.settings import Settings

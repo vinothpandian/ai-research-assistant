@@ -13,26 +13,42 @@ RUN apt-get update \
 
 RUN pip install --no-cache-dir poetry==${POETRY_VERSION}
 
-WORKDIR /src
+WORKDIR /app
 
-COPY core ./core
 COPY pyproject.toml poetry.lock ./
 
 RUN poetry install --only core --no-root
 
+# -----
+
+FROM base as workers
+
+ENV PATH="/app/.venv/bin:$PATH"
+
+RUN poetry install --only workers --no-root
+
+WORKDIR /app
+
+COPY core ./core
+COPY workers ./workers
+COPY config.yaml ./config.yaml
+
+CMD dramatiq -p 2 -t 2 workers.app
+
+# -----
 
 FROM base as api
 
-ENV PATH="/src/.venv/bin:$PATH"
+ENV PATH="/app/.venv/bin:$PATH"
 
 RUN poetry install --only core-api,api,workers --no-root
 
-WORKDIR /src
+WORKDIR /app
 
+COPY core ./core
 COPY api ./api
 COPY workers ./workers
 COPY config.yaml ./config.yaml
 
 CMD uvicorn api.main:app --proxy-headers --host 0.0.0.0 --port 8000
-
 

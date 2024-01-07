@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 from ray import serve
@@ -23,7 +25,7 @@ app = FastAPI(
 
 
 class RequestData(BaseModel):
-    prompt: str
+    prompt: str | List[str]
 
 
 @serve.deployment(num_replicas=2, ray_actor_options={"num_cpus": 0.2, "num_gpus": 0})

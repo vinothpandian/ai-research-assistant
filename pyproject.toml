@@ -38,7 +38,7 @@ watchdog = "^3.0.0"
 
 [tool.poetry.group.ai.dependencies]
 sentence-transformers = "^2.2.2"
-ray = {extras = ["serve"], version = "^2.9.0"}
+ray = { extras = ["serve"], version = "^2.9.0" }
 
 
 [tool.poetry.group.core-api.dependencies]
@@ -46,12 +46,9 @@ fastapi = "^0.108.0"
 uvicorn = "^0.25.0"
 
 
-[tool.poetry.group.api.dependencies]
-openai = "^1.6.1"
-
-
 [tool.poetry.group.workers.dependencies]
-dramatiq = {extras = ["watch"], version = "^1.15.0"}
+dramatiq = { extras = ["watch"], version = "^1.15.0" }
+openai = "^1.6.1"
 
 [build-system]
 requires = ["poetry-core"]

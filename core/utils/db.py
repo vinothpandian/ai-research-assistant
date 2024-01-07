@@ -1,10 +1,10 @@
 import pocketbase
 from pocketbase.models.utils import BaseModel
 
-from api.utils.parser import get_article_from_record, get_articles_from_records
 from core.schema.article import Article, ArticlesList, CreateArticle
 from core.schema.pagination import Pagination
 from core.settings import Settings
+from core.utils.parser import get_article_from_record, get_articles_from_records
 
 
 class ArticleDB:
