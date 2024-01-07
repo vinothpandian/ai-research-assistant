@@ -23,7 +23,7 @@ app = FastAPI(
 
 
 class RequestData(BaseModel):
-    prompt: str
+    prompt: str | list[str]
 
 
 @serve.deployment(num_replicas=2, ray_actor_options={"num_cpus": 0.2, "num_gpus": 0})
