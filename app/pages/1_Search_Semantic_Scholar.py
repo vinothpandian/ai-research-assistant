@@ -32,6 +32,7 @@ def save_article(ss_article: SemanticScholarArticle):
             link=ss_article.url,
             published=ss_article.publicationDate,
             authors=[author.name for author in ss_article.authors],
+            pdf_url=ss_article.openAccessPdf.url if ss_article.openAccessPdf else None,
         )
         api_client.create_article(article_to_create)
         st.toast("Article added to library")
@@ -63,8 +64,12 @@ if query:
             st.header(article.title)
             st.caption(", ".join(author.name for author in article.authors))
             st.write(article.url)
+            st.write("PDF:", article.openAccessPdf.url if article.openAccessPdf else "Not available")
             st.caption(article.abstract)
             columns = st.columns(6)
+
+            if article.openAccessPdf:
+                columns[0].write("Full text indexing supported")
             columns[-1].button(
                 "Add to library", key=f"save_{i}", use_container_width=True, on_click=save_article, args=(article,)
             )

@@ -72,5 +72,4 @@ class ApiClient:
             ),
             timeout=None,
         ) as response:
-            for line in response.iter_text():
-                yield line
+            yield from response.iter_text()

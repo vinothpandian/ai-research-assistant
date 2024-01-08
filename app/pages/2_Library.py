@@ -50,7 +50,7 @@ for article in data.items:
         st.subheader(article.title)
         st.caption(", ".join(article.authors))
         st.write(article.link)
-        if not article.vector_id:
+        if not article.embeddings_generated:
             st.write("Article not ready for semantic search yet")
 
         hide_ai_summary = st.toggle("Show abstract", key=f"show_ai_{article.id}")

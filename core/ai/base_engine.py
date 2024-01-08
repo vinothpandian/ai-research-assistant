@@ -1,8 +1,8 @@
-from typing import Dict
+from typing import Dict, List
 
 import httpx
 
-from core.schema.article import Article, ArticlesWithScoreList
+from core.schema.article import Article
 from core.settings import Settings
 
 
@@ -20,13 +20,13 @@ class HuggingfaceAIEngine:
     def get_summarization_request_data(self, article: Article) -> Dict[str, str]:
         return {"prompt": article.abstract}
 
-    def get_embeddings_request_data(self, text: str) -> Dict[str, str]:
-        return {"prompt": text}
+    def get_embeddings_request_data(self, chunks: List[str]) -> dict:
+        return {"prompt": chunks}
 
-    def get_question_answer_request_data(self, question: str, articles: ArticlesWithScoreList) -> Dict[str, str]:
-        abstracts = self.get_question_info(articles)
+    def get_question_answer_request_data(self, question: str, contexts: List[str]) -> Dict[str, str]:
+        prompt_context = self.get_question_info(contexts)
 
-        prompt = f"""Context: {abstracts}
+        prompt = f"""Context: {prompt_context}
 
         Question: {question}?
 
@@ -34,13 +34,8 @@ class HuggingfaceAIEngine:
 
         return {"prompt": prompt}
 
-    def get_question_info(self, articles):
-        return "\n\n".join(
-            [
-                f"Article #{i}:\nTitle: {article.title}\nAuthors:{article.authors}\nAbsract:{article.abstract}"
-                for i, article in enumerate(articles)
-            ]
-        )
+    def get_question_info(self, contexts: List[str]):
+        return "\n\n".join(contexts)
 
     def get_summary(self, article: Article):
         data = self.get_summarization_request_data(article)
@@ -50,21 +45,21 @@ class HuggingfaceAIEngine:
         result = response.json()
         return result["response"]
 
-    def get_embeddings(self, text: str):
-        data = self.get_embeddings_request_data(text)
+    def get_embeddings(self, chunks: List[str]):
+        data = self.get_embeddings_request_data(chunks)
 
         response = httpx.post(self.embedding_url, json=data, timeout=None)
         response.raise_for_status()
         result = response.json()
         return result["embedding"]
 
-    def __get_answer_from_context(self, question: str, articles: ArticlesWithScoreList):
-        data = self.get_question_answer_request_data(question, articles)
+    def __get_answer_from_context(self, question: str, contexts: List[str]):
+        data = self.get_question_answer_request_data(question, contexts)
 
         response = httpx.post(self.qa_url, json=data, timeout=None)
         response.raise_for_status()
         result = response.json()
         return result["response"]
 
-    async def get_answer(self, question: str, articles: ArticlesWithScoreList):
-        yield self.__get_answer_from_context(question, articles)
+    async def get_answer(self, question: str, contexts: List[str]):
+        yield self.__get_answer_from_context(question, contexts)

@@ -5,7 +5,6 @@ from uuid import uuid4
 from qdrant_client import QdrantClient, models
 from qdrant_client.models import ScoredPoint
 
-from core.schema.article import Article
 from core.settings import Settings
 
 DISTANCE_MAP = {
@@ -31,25 +30,39 @@ class VectorDB:
                 ),
             )
 
-    def save_article(self, article: Article, vector) -> str:
-        vector_id = str(uuid4())  # generate a random id
+    def save_article(self, article_id: str, chunks: List[str], vectors: List[List[float]]):
+        vector_ids = [str(uuid4()) for _ in range(len(vectors))]
+        records = [
+            models.Record(
+                id=vector_id,
+                vector=vector,
+                payload=dict(id=article_id, text=chunk),
+            )
+            for vector_id, chunk, vector in zip(vector_ids, chunks, vectors)
+        ]
+
         self.client.upload_records(
             collection_name=self.collection_name,
-            records=[
-                models.Record(
-                    id=vector_id,
-                    vector=vector,
-                    payload=dict(id=article.id),
-                )
-            ],
+            records=records,
         )
-        return vector_id
 
-    def remove_article(self, vector_id: str) -> None:
-        self.client.delete(collection_name=self.collection_name, points_selector=[vector_id])
+    def remove_article(self, article_id: str) -> None:
+        self.client.delete(
+            collection_name=self.collection_name,
+            points_selector=models.FilterSelector(
+                filter=models.Filter(
+                    must=[
+                        models.FieldCondition(
+                            key="id",
+                            match=models.MatchValue(value=article_id),
+                        ),
+                    ]
+                )
+            ),
+        )
 
     def semantic_search(self, vector: List[float]) -> List[ScoredPoint]:
-        return self.client.search(collection_name=self.collection_name, query_vector=vector, limit=3)
+        return self.client.search(collection_name=self.collection_name, query_vector=vector, limit=10)
 
     def disconnect(self):
         self.client = None

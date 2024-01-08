@@ -1,4 +1,6 @@
 run_all: run_backend run_app
+
+dev_all: dev_api run_app
 	
 run_backend: run_api
 

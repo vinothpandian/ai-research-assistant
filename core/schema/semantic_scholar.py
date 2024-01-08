@@ -2,11 +2,15 @@ from typing import Annotated, Iterable, List
 
 from pydantic import AfterValidator, BaseModel, RootModel
 
-from ..utils.text import clean_text
+from core.utils.validation import clean_text
 
 
 class Author(BaseModel):
     name: str
+
+
+class OpenAccessPdf(BaseModel):
+    url: str
 
 
 class SemanticScholarArticle(BaseModel):
@@ -16,6 +20,8 @@ class SemanticScholarArticle(BaseModel):
     url: str
     authors: List[Author]
     publicationDate: str | None = None
+    isOpenAccess: bool = False
+    openAccessPdf: OpenAccessPdf | None = None
 
 
 class SemanticScholarArticlesList(RootModel):

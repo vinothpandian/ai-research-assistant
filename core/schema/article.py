@@ -2,7 +2,7 @@ from typing import Annotated, Iterator, List
 
 from pydantic import AfterValidator, BaseModel, RootModel
 
-from core.utils.text import clean_text
+from core.utils.validation import clean_text
 
 
 class CreateArticle(BaseModel):
@@ -12,16 +12,18 @@ class CreateArticle(BaseModel):
     link: str
     published: str
     authors: List[str]
+    pdf_url: str | None = None
 
 
 class Article(CreateArticle):
     id: str | None = None
     ai_summary: str = ""
-    vector_id: str = ""
+    embeddings_generated: bool = False
 
 
 class ArticleWithScore(Article):
     score: float
+    chunks: List[str] = []
 
 
 class ArticlesList(RootModel):

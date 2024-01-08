@@ -26,26 +26,38 @@ with st.expander("Advanced options"):
 title = ""
 
 
-def render_articles(articles: ArticlesWithScoreList):
-    st.divider()
+def render_articles(articles: ArticlesWithScoreList, header: str | None = None):
+    container = st.container()
 
-    if len(articles) > 0:
-        st.markdown(f"**Found {len(articles)} results**")
+    if header:
+        container.subheader(header)
+
+    if not header:
+        st.divider()
+
+        if len(articles) > 0:
+            container.markdown(f"**Found {len(articles)} results**")
 
     if len(articles) == 0 and st.session_state.question:
-        st.write("No results found")
+        container.write("No results found")
 
     if len(articles) == 0 and not st.session_state.question:
-        st.write("Your library is empty")
+        container.write("Your library is empty")
 
     for article in articles:
-        with st.container():
+        with container.container():
             st.subheader(article.title)
             st.caption(", ".join(article.authors))
             with contextlib.suppress(AttributeError):
-                st.write("Similarity score: ", article.score)
+                if not header:
+                    st.write("Similarity score: ", article.score)
             st.write(article.link)
-            st.caption(article.ai_summary)
+            st.caption(article.abstract if header else article.ai_summary)
+            if expand := st.expander("Contexts"):
+                for context in article.chunks:
+                    expand.caption(context)
+                    expand.divider()
+
             st.divider()
 
 
@@ -62,9 +74,9 @@ if st.session_state.question and search_option == "Ask a question":
     container.subheader("Answer")
     answer_placeholder = container.empty()
     answer_placeholder.write("Loading...")
-    render_articles(articles)
+    render_articles(articles, header="Context")
     item: str
-    for i, item in enumerate(qa_result):
+    for item in qa_result:
         answer += str(item)
         answer_placeholder.write(answer)
 

@@ -16,7 +16,8 @@ def get_article_from_record(record: BaseModel):
         published=record.published,
         authors=record.authors,
         ai_summary=record.ai_summary,
-        vector_id=record.vector_id,
+        embeddings_generated=record.embeddings_generated,
+        pdf_url=record.pdf_url,
     )
 
 

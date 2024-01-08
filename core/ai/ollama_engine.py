@@ -1,11 +1,12 @@
 import contextlib
 import json
 from json import JSONDecodeError
+from typing import List
 
 import httpx
 
 from core.ai.base_engine import HuggingfaceAIEngine
-from core.schema.article import Article, ArticlesWithScoreList
+from core.schema.article import Article
 
 
 class OllamaEngine(HuggingfaceAIEngine):
@@ -23,12 +24,12 @@ class OllamaEngine(HuggingfaceAIEngine):
 
         return {"model": self.summarizer_model, "prompt": prompt, "stream": False}
 
-    def get_embeddings_request_data(self, text: str) -> dict:
-        request_data = super().get_embeddings_request_data(text)
+    def get_embeddings_request_data(self, chunks: List[str]) -> dict:
+        request_data = super().get_embeddings_request_data(chunks)
         return {"model": self.embedding_model, "prompt": request_data["prompt"], "stream": False}
 
-    def get_question_answer_request_data(self, question: str, articles: ArticlesWithScoreList) -> dict:
-        request_data = super().get_question_answer_request_data(question, articles)
+    def get_question_answer_request_data(self, question: str, contexts: List[str]) -> dict:
+        request_data = super().get_question_answer_request_data(question, contexts)
 
         prompt = f"""Answer the question based on the context given below. The answer should only contain information that is present in the context. The answer should not contain any information that is not present in the context.
 
@@ -37,8 +38,8 @@ class OllamaEngine(HuggingfaceAIEngine):
 
         return {"model": self.qa_model, "prompt": prompt, "stream": True}
 
-    async def get_answer(self, question: str, articles: ArticlesWithScoreList):
-        data = self.get_question_answer_request_data(question, articles)
+    async def get_answer(self, question: str, contexts: List[str]):
+        data = self.get_question_answer_request_data(question, contexts)
 
         async with httpx.AsyncClient() as client:
             request = client.build_request("POST", self.qa_url, json=data, timeout=None)

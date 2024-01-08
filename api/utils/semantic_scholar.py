@@ -8,7 +8,9 @@ def get_semantic_scholar_feed(q: str, start: int = 0, limit: int = 10) -> Pagina
     response = httpx.get(
         "https://api.semanticscholar.org/graph/v1/paper/search",
         params=dict(
-            fields="paperId,title,abstract,url,authors,publicationDate",
+            fields="paperId,title,abstract,url,authors,publicationDate,openAccessPdf",
+            fieldsOfStudy="Computer Science",
+            publicationTypes="JournalArticle",
             query=q,
             offset=start,
             limit=limit,

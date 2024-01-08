@@ -4,6 +4,7 @@ from loguru import logger
 
 from core.ai.agent import AIAgent
 from core.settings import settings
+from core.utils.chunking import get_chunks_from_article
 from core.utils.db import ArticleDB
 from core.utils.vector_db import VectorDB
 
@@ -42,9 +43,10 @@ def generate_embeddings_task(article_id: str):
 
     try:
         article = articles_db.get_article(article_id)
-        vector = ai_agent.get_embeddings(article)
-        vector_id = vector_db.save_article(article, vector)
-        articles_db.update_article(article_id=article_id, vector_id=vector_id)
+        chunks = get_chunks_from_article(article=article)
+        vectors = ai_agent.get_embeddings(chunks)
+        vector_db.save_article(article_id, chunks, vectors)
+        articles_db.update_article(article_id=article_id, embeddings_generated=True)
     except Exception as e:
         logger.error(f"Error generating embeddings for article {article.id}: {e}")
     else:

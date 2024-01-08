@@ -1,7 +1,9 @@
+from typing import List
+
 from core.ai.base_engine import HuggingfaceAIEngine
 from core.ai.ollama_engine import OllamaEngine
 from core.ai.openai_engine import OpenAIEngine
-from core.schema.article import Article, ArticlesWithScoreList
+from core.schema.article import Article
 from core.settings import Settings
 
 
@@ -26,13 +28,8 @@ class AIAgent:
     def get_summary(self, article: Article) -> str:
         return self.summarizer.get_summary(article)
 
-    def get_embeddings(self, content: str | Article) -> list[float]:
-        if isinstance(content, str):
-            return self.embedding.get_embeddings(content)
+    def get_embeddings(self, chunks: List[str]) -> List[List[float]]:
+        return self.embedding.get_embeddings(chunks)
 
-        authors = ", ".join(content.authors)
-        text = f"Title: {content.title}\n\nAuthors: {authors}\n\nAbstract: {content.abstract}"
-        return self.embedding.get_embeddings(text)
-
-    def get_answer(self, question: str, articles: ArticlesWithScoreList) -> str:
-        return self.qa.get_answer(question, articles)
+    def get_answer(self, question: str, contexts: List[str]) -> str:
+        return self.qa.get_answer(question, contexts)
