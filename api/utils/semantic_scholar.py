@@ -21,9 +21,11 @@ def get_semantic_scholar_feed(q: str, start: int = 0, limit: int = 10) -> Pagina
 
     result = response.json()
 
+    data = result.get("data", [])
+
     return Pagination(
         total_items=result["total"],
         start=start,
         limit=limit,
-        items=SemanticScholarArticlesList.model_validate(result["data"]),
+        items=SemanticScholarArticlesList.model_validate(data),
     )

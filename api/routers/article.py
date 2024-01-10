@@ -88,6 +88,8 @@ def search_articles(
             ]
         )
 
+        articles_with_score = sorted(articles_with_score, key=lambda x: x.score, reverse=True)
+
         return {"articles": articles_with_score}
     except ClientResponseError as e:
         raise HTTPException(status_code=e.status, detail=str(e.data))

@@ -50,7 +50,7 @@ def render_articles(articles: ArticlesWithScoreList, header: str | None = None):
             st.caption(", ".join(article.authors))
             with contextlib.suppress(AttributeError):
                 if not header:
-                    st.write("Similarity score: ", article.score)
+                    st.write("Similarity score: ", round(article.score, 3))
             st.write(article.link)
             st.caption(article.abstract if header else article.ai_summary)
             if expand := st.expander("Contexts"):

@@ -62,10 +62,8 @@ class OpenAIEngine(OllamaEngine):
                 can contain any bullet points or lists. The answer should be in the third person
                  and should not contain any personal pronouns. The answer should only contain
                  information that is present in the context provided before the question. You will
-                 always add references to the answer in [1, 2, 3..] format if you use any information
-                 from the context and always add references at the end in APA citation format. You will
-                 never repeat the same reference multiple times. You will only add references you used and
-                 keep the references list unique.""",
+                 always add references to the answer in (paper_title) format if you use any information
+                 from the context.""",
             },
             {
                 "role": "user",
