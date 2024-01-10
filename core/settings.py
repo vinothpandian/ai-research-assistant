@@ -63,6 +63,10 @@ class OpenAISettings(BaseSettings):
     key: str = ""
 
 
+class SemanticScholarSettings(BaseSettings):
+    api_key: str = ""
+
+
 class Settings(BaseSettings):
     redis: RedisSettings = RedisSettings()
     qdrant: QdrantSettings = QdrantSettings()
@@ -72,6 +76,7 @@ class Settings(BaseSettings):
     embedding: EmbeddingSettings = EmbeddingSettings()
     qa: QASettings = QASettings()
     openai: OpenAISettings = OpenAISettings()
+    semantic_scholar: SemanticScholarSettings = SemanticScholarSettings()
 
 
 if not pathlib.Path(CONFIG_FILE).exists():

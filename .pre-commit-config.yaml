@@ -15,4 +15,4 @@ repos:
       - id: mypy
         args:
           [--ignore-missing-imports, --follow-imports=skip, --strict-optional]
-        additional_dependencies: [types-redis]
+        additional_dependencies: [types-redis, types-PyYAML]

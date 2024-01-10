@@ -2,7 +2,7 @@ _format_version: "3.0"
 
 plugins:
   - config:
-      minute: 5000
+      second: 1
       policy: local
       fault_tolerant: true
     enabled: true

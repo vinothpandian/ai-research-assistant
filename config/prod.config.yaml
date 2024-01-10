@@ -1,0 +1,36 @@
+redis:
+  host: redis
+  port: 6379
+  db: 0
+
+qdrant:
+  url: http://qdrant:6333/
+
+pocketbase:
+  url: http://pocketbase:8080/
+
+api:
+  url: http://localhost:8000/
+
+summarizer:
+  type: huggingface
+  model: Falconsai/text_summarization
+  url: http://host.docker.internal:9000/summarize/
+
+embedding:
+  type: huggingface
+  model: multi-qa-MiniLM-L6-cos-v1
+  url: http://host.docker.internal:9000/embedding/
+  dim: 384
+  distance: cosine
+
+qa:
+  type: huggingface
+  model: google/flan-t5-base
+  url: http://host.docker.internal:9000/answer/
+
+openai:
+  key: sk-2x2x2x2x2x
+
+semantic_scholar:
+  api_key: not_required

@@ -42,6 +42,9 @@ def save_article(ss_article: SemanticScholarArticle):
 
 query = st.text_input("Search for research articles by title, author, DOI, etc.")
 
+if not query:
+    st.session_state.start = 0
+
 if query:
     st.divider()
     data = api_client.search_articles(query=query, start=st.session_state.start, limit=limit)

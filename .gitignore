@@ -178,4 +178,6 @@ pyrightconfig.json
 .idea/
 
 *config.yaml
+!config/dev.config.yaml
+!config/prod.config.yaml
 notebooks/data/*.pdf
