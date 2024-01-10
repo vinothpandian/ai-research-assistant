@@ -33,7 +33,7 @@ COPY core ./core
 COPY workers ./workers
 COPY config.yaml ./config.yaml
 
-CMD dramatiq -p 2 -t 2 workers.app
+CMD dramatiq -p 4 -t 8 workers.app
 
 # -----
 
@@ -50,5 +50,5 @@ COPY api ./api
 COPY workers ./workers
 COPY config.yaml ./config.yaml
 
-CMD uvicorn api.main:app --proxy-headers --host 0.0.0.0 --port 8000
+CMD uvicorn api.main:app --proxy-headers --workers 2 --host 0.0.0.0 --port 8000
 
