@@ -34,7 +34,7 @@ types-redis = "^4.6.0.20240106"
 
 
 [tool.poetry.group.app.dependencies]
-streamlit = "^1.29.0"
+streamlit = "^1.30.0"
 watchdog = "^3.0.0"
 
 
