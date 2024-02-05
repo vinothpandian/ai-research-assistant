@@ -44,7 +44,7 @@ ray = { extras = ["serve"], version = "^2.9.0" }
 
 
 [tool.poetry.group.core-api.dependencies]
-fastapi = "^0.108.0"
+fastapi = "^0.109.1"
 uvicorn = "^0.25.0"
 
 
